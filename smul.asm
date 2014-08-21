@@ -10,6 +10,7 @@
 ;               Configured for PIC16F872.
 ;               Put routine in FXM1616U_Code_Sec.
 ;   13Aug14 SHiggins@tinyRTX.com Converted from PIC16877 to PIC18F452.
+;   21Aug14 SHiggins@tinyRTX.com Made obsolete with SM16_16x16u in sm16.asm.
 ;
 ;*******************************************************************************
 ;

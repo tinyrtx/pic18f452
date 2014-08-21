@@ -21,6 +21,7 @@
 ;
 ; Revision history:
 ;   09Sep03 SHiggins@tinyRTX.com Created from scratch.
+;   21Aug14 SHiggins@tinyRTX.com Made obsolete with SM16_16x16u in sm16.asm.
 ;
 ;*******************************************************************************
         NOLIST

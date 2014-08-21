@@ -24,13 +24,13 @@
 ;   29Jul14  SHiggins@tinyRTX.com  Move UADC_SetupDelay to inline in UADC_Trigger, reducing stack.
 ;   13Aug14  SHiggins@tinyRTX.com  Converted from PIC16877 to PIC18F452.
 ;   18Aug14  SHiggins@tinyRTX.com  Minor optimizations.
+;   21Aug14  SHiggins@tinyRTX.com  Replaced FXM1616U with SM16_16x16u.
 ;
 ;*******************************************************************************
 ;
         errorlevel -302	
         #include    <p18f452.inc>
         #include    <sm16.inc>
-        #include    <smul.inc>
         #include    <sbcd.inc>
         #include    <ulcd.inc>
 ;
@@ -152,7 +152,7 @@ UADC_RawToASCII
         movlw   0xe3
         movwf   BARGB1
 ;
-        call    FXM1616U                ; 16 x 16 unsigned multiply, AARG <- AARG x BARG.
+        call    SM16_16x16u             ; 16 x 16 unsigned multiply, AARG <- AARG x BARG.
                                         ; AARGB0-AARGB3 = raw A/D * 1251.
                                         ; To divide by 256 we ignore AARGB3 result byte.
 ;

@@ -100,7 +100,7 @@ SECTION    NAME=ULCD_CodeSec        ROM=p1_user_general     // User LCD routines
 SECTION    NAME=UI2C_CodeSec        ROM=p1_user_general     // User I2C routines.      LINKNOTE: Place on same page as UI2C_TableSec.
 SECTION    NAME=UADC_CodeSec        ROM=p1_user_general     // User ADC routines.
 SECTION    NAME=UAPP_CodeSec        ROM=p1_user_general     // Main user application.
-SECTION    NAME=SMUL_CodeSec        ROM=p2_user_general     // Math routines.
+SECTION    NAME=SM16_CodeSec        ROM=p2_user_general     // Math routines.
 SECTION    NAME=SBCD_CodeSec        ROM=p2_user_general     // BCD conversion routines.
 SECTION    NAME=cinit               ROM=.cinit              // Bogus ROMDATA section, linker always places.
 //

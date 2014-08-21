@@ -22,12 +22,12 @@
 ; Revision history:
 ; 23Sep03  SHiggins@tinyRTX.com  Created from scratch.
 ; 10Jun14  SHiggins@tinyRTX.com  Renamed from ma16 to sm16 for conformance.
+; 21Aug14  SHiggins@tinyRTX.com  Removed LOOPCOUNT and SIGN, added SM16_16x16u, _C.
 ;
 ;**********************************************************************************************
         NOLIST
 ;
 		#define	_C		STATUS,0
-		#define	_Z		STATUS,2
 ;
         EXTERN  AARGB7
         EXTERN  AARGB6
@@ -51,6 +51,4 @@
         EXTERN  TEMPB0
         EXTERN  TEMP
 ;
-        EXTERN  LOOPCOUNT
-;
-SIGN    EQU     0x109    ; save location for sign in MSB
+        EXTERN  SM16_16x16u
