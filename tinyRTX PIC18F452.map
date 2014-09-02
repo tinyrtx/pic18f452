@@ -1,5 +1,5 @@
 MPLINK 4.49, Linker
-Linker Map File - Created Thu Aug 21 12:58:39 2014
+Linker Map File - Created Tue Sep 02 11:09:00 2014
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
@@ -17,12 +17,12 @@ Linker Map File - Created Thu Aug 21 12:58:39 2014
             ULCD_TableSec       code   0x000800    program   0x00007a
             UI2C_TableSec       code   0x00087a    program   0x000010
                    .cinit    romdata   0x00088a    program   0x000002
-             SM16_CodeSec       code   0x00088c    program   0x000044
              ULCD_CodeSec       code   0x000900    program   0x00007a
              UI2C_CodeSec       code   0x00097a    program   0x00008e
              UADC_CodeSec       code   0x000a08    program   0x00008a
              UAPP_CodeSec       code   0x000a92    program   0x00004e
-             SBCD_CodeSec       code   0x001000    program   0x000110
+             SM16_CodeSec       code   0x001000    program   0x000044
+             SBCD_CodeSec       code   0x001044    program   0x000110
          SISD_UdataShrSec      udata   0x000000       data   0x000006
             SRTX_UdataSec      udata   0x000080       data   0x000009
             SUSR_UdataSec      udata   0x000089       data   0x000001
@@ -44,9 +44,9 @@ Linker Map File - Created Thu Aug 21 12:58:39 2014
                             0x000008    0x00000b      
                             0x000028    0x0004ff      
                             0x000700    0x000727      
-                            0x000800    0x0008cf      
+                            0x000800    0x00088b      
                             0x000900    0x000adf      
-                            0x001000    0x00110f      
+                            0x001000    0x001153      
             2248 out of 32770 program addresses used, program memory utilization is 6%
 
 
@@ -100,7 +100,7 @@ SI2C_AckNackDone_ReceiveEnable   0x0003f2    program     static C:\Users\Stephen
         SLCD_WriteNibble1   0x0001cc    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\slcd.asm
       SLCD_WriteNibbleCmd   0x0001c8    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\slcd.asm
      SLCD_WriteNibbleData   0x0001c2    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\slcd.asm
-              SM16_16x16U   0x00088c    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sm16.asm
+              SM16_16x16u   0x001000    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sm16.asm
     SRTX_ComputedBraRCall   0x000140    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\srtx.asm
     SRTX_ComputedGotoCall   0x000150    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\srtx.asm
           SRTX_Dispatcher   0x0000e6    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\srtx.asm
@@ -151,22 +151,22 @@ UI2C_MsgTC74CheckStatusPassed   0x0009c2    program     static C:\Users\Stephen\
         ULCD_RefreshLine2   0x000934    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ulcd.asm
                ULCD_Table   0x00081a    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ulcd.asm
          ULCD_TableLookup   0x000800    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ulcd.asm
-                 bcd2a3p0   0x0010f6    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-                 bcd2a5p3   0x0010c8    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-                 e2bcd16u   0x001000    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit2Done   0x001092    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit2Loop   0x001086    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit3Done   0x001076    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit3Loop   0x001062    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit4Done   0x00104c    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit4Loop   0x001038    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit5Done   0x001024    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit5Loop   0x001010    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-                  e2bcd8u   0x00109e    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-       e2bcd8u_Digit2Done   0x0010be    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-       e2bcd8u_Digit2Loop   0x0010b4    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-       e2bcd8u_Digit3Done   0x0010b0    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-       e2bcd8u_Digit3Loop   0x0010a6    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+                 bcd2a3p0   0x00113a    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+                 bcd2a5p3   0x00110c    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+                 e2bcd16u   0x001044    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit2Done   0x0010d6    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit2Loop   0x0010ca    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit3Done   0x0010ba    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit3Loop   0x0010a6    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit4Done   0x001090    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit4Loop   0x00107c    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit5Done   0x001068    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit5Loop   0x001054    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+                  e2bcd8u   0x0010e2    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+       e2bcd8u_Digit2Done   0x001102    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+       e2bcd8u_Digit2Loop   0x0010f8    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+       e2bcd8u_Digit3Done   0x0010f4    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+       e2bcd8u_Digit3Loop   0x0010ea    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
                      AARG   0x000208       data     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sm16.asm
                    AARGB0   0x000207       data     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sm16.asm
                    AARGB1   0x000206       data     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sm16.asm
@@ -334,7 +334,6 @@ SI2C_AckNackDone_ReceiveEnable   0x0003f2    program     static C:\Users\Stephen
          ULCD_TableLookup   0x000800    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ulcd.asm
                ULCD_Table   0x00081a    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ulcd.asm
         UI2C_Tbl_MsgState   0x00087a    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ui2c.asm
-              SM16_16x16U   0x00088c    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sm16.asm
                 ULCD_Init   0x000900    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ulcd.asm
         ULCD_RefreshLine1   0x000908    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ulcd.asm
     ULCD_RefreshLine1Loop   0x00091a    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\ulcd.asm
@@ -355,22 +354,23 @@ UI2C_MsgTC74CheckStatusExit   0x0009c6    program     static C:\Users\Stephen\Do
      UADC_SetupDelay_Loop   0x000a20    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\uadc.asm
           UADC_RawToASCII   0x000a2e    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\uadc.asm
             UAPP_POR_Init   0x000a92    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\uapp.asm
-                 e2bcd16u   0x001000    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit5Loop   0x001010    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit5Done   0x001024    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit4Loop   0x001038    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit4Done   0x00104c    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit3Loop   0x001062    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit3Done   0x001076    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit2Loop   0x001086    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-      e2bcd16u_Digit2Done   0x001092    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-                  e2bcd8u   0x00109e    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-       e2bcd8u_Digit3Loop   0x0010a6    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-       e2bcd8u_Digit3Done   0x0010b0    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-       e2bcd8u_Digit2Loop   0x0010b4    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-       e2bcd8u_Digit2Done   0x0010be    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-                 bcd2a5p3   0x0010c8    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
-                 bcd2a3p0   0x0010f6    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+              SM16_16x16u   0x001000    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sm16.asm
+                 e2bcd16u   0x001044    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit5Loop   0x001054    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit5Done   0x001068    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit4Loop   0x00107c    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit4Done   0x001090    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit3Loop   0x0010a6    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit3Done   0x0010ba    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit2Loop   0x0010ca    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+      e2bcd16u_Digit2Done   0x0010d6    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+                  e2bcd8u   0x0010e2    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+       e2bcd8u_Digit3Loop   0x0010ea    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+       e2bcd8u_Digit3Done   0x0010f4    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+       e2bcd8u_Digit2Loop   0x0010f8    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+       e2bcd8u_Digit2Done   0x001102    program     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+                 bcd2a5p3   0x00110c    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
+                 bcd2a3p0   0x00113a    program     extern C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sbcd.asm
                SISD_TempW   0x000000       data     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sisd.asm
           SISD_TempSTATUS   0x000001       data     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sisd.asm
           SISD_TempPCLATH   0x000002       data     static C:\Users\Stephen\Documents\SW Projects\TinyRTX PIC18F452\sisd.asm
