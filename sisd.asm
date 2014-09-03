@@ -23,6 +23,9 @@
 ;   23Jul14 SHiggins@tinyRTX.com 	Move save/restore FSR from SISD_Director to 
 ;									to SISD_Interrupt
 ;   14Aug14 SHiggins@tinyRTX.com    Converted from PIC16877 to PIC18F452.
+;   02Sep14 SHiggins@tinyRTX.com    Save/restore BSR.
+;   								Remove AD_COMPLETE_TASK and I2C_COMPLETE_TASK options.
+;									Both now have some interrupt handling and a task.
 ;
 ;*******************************************************************************
 ;
@@ -48,6 +51,7 @@ SISD_UdataShrSec    UDATA_ACS
 ;
 SISD_TempW          res     1   ; Access Bank; temp copy of W.
 SISD_TempSTATUS     res     1   ; Access Bank; temp copy of STATUS.
+SISD_TempBSR		res     1   ; Access Bank; temp copy of BSR.
 SISD_TempPCLATH     res     1   ; Access Bank; temp copy of PCLATH.
 SISD_TempPCLATU     res     1   ; Access Bank; temp copy of PCLATU.
 SISD_TempFSR0H      res     1   ; Access Bank; temp copy of FSR.
@@ -70,6 +74,7 @@ SISD_IntCodeSec     CODE            ; Interrupt handler, too big to fit at vecto
 SISD_Interrupt
         movwf   SISD_TempW          	; Access RAM; preserve W without changing STATUS.
 		movff	STATUS, SISD_TempSTATUS	; Access RAM; preserve STATUS.
+		movff	BSR, SISD_TempBSR		; Access RAM; preserve BSR.
 		movff	PCLATH, SISD_TempPCLATH	; Access RAM; preserve PCLATH.
 		movff	PCLATU, SISD_TempPCLATU	; Access RAM; preserve PCLATU.
 		movff	FSR0L, SISD_TempFSR0L	; Access RAM; preserve FSR0L.
@@ -91,6 +96,7 @@ SISD_InterruptExit
 		movff	SISD_TempFSR0L, FSR0L 	; Access RAM; restore FSR0L.
 		movff	SISD_TempPCLATU, PCLATU	; Access RAM; restore PCLATU.
 		movff	SISD_TempPCLATH, PCLATH	; Access RAM; restore PCLATH.
+		movff	SISD_TempBSR, BSR		; Access RAM; restore BSR.
 		movff	SISD_TempSTATUS, STATUS	; Access RAM; restore STATUS.
         swapf   SISD_TempW, F       	; Access RAM; restore W without changing STATUS.
         swapf   SISD_TempW, W
@@ -135,17 +141,11 @@ SISD_Director_CheckADC
         bcf     PIR1, ADIF              ; Clear A/D interrupt flag.
         banksel PIE1
         bcf     PIE1, ADIE              ; Disable A/D interrupts.
-    IF AD_COMPLETE_TASK == AT_INTERRUPT
-        call    SUSR_TaskADC            ; User handling when A/D complete, must RETURN at end.
-        bra     SISD_Director_Exit      ; Only execute single interrupt handler.
-    ENDIF
-    IF AD_COMPLETE_TASK == SCHEDULE_TASK
         banksel SRTX_Sched_Cnt_TaskADC
         incfsz  SRTX_Sched_Cnt_TaskADC, F   ; Increment task schedule count.
         bra     SISD_Director_Exit          ; Task schedule count did not rollover.
         decf    SRTX_Sched_Cnt_TaskADC, F   ; Max task schedule count.
         bra     SISD_Director_Exit          ; Only execute single interrupt handler.
-   ENDIF
 ;
 ; Test for completion of I2C event.
 ;
@@ -153,17 +153,15 @@ SISD_Director_CheckI2C
         btfss   PIR1, SSPIF             ; Skip if I2C interrupt flag set.
         bra     SISD_Director_Exit      ; I2C int flag not set, check other ints.
         bcf     PIR1, SSPIF             ; Clear I2C interrupt flag.
-    IF I2C_COMPLETE_TASK == AT_INTERRUPT
         call    SUSR_TaskI2C            ; User handling when I2C event, must RETURN at end.
         bra     SISD_Director_Exit      ; Only execute single interrupt handler.
-    ENDIF
-    IF I2C_COMPLETE_TASK == SCHEDULE_TASK
-        banksel SRTX_Sched_Cnt_TaskI2C
-        incfsz  SRTX_Sched_Cnt_TaskI2C, F   ; Increment task schedule count.
-        bra     SISD_Director_Exit          ; Task schedule count did not rollover.
-        decf    SRTX_Sched_Cnt_TaskI2C, F   ; Max task schedule count.
-        bra     SISD_Director_Exit          ; Only execute single interrupt handler.
-    ENDIF
+;;    IF I2C_COMPLETE_TASK == SCHEDULE_TASK
+;;        banksel SRTX_Sched_Cnt_TaskI2C
+;;        incfsz  SRTX_Sched_Cnt_TaskI2C, F   ; Increment task schedule count.
+;;        bra     SISD_Director_Exit          ; Task schedule count did not rollover.
+;;        decf    SRTX_Sched_Cnt_TaskI2C, F   ; Max task schedule count.
+;;        bra     SISD_Director_Exit          ; Only execute single interrupt handler.
+;;    ENDIF
 ;
 ; This point only reached if unknown interrupt occurs, any error handling can go here.
 ;

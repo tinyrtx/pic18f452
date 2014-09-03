@@ -19,8 +19,12 @@
 ; copying.txt) along with tinyRTX.  If not, see <http://www.gnu.org/licenses/>.
 ;
 ; Revision history:
-;   20Feb04  SHiggins@tinyRTX.com Created from scratch.
-;   13Aug14  SHiggins@tinyRTX.com Converted from PIC16877 to PIC18F452.
+;	20Feb04	SHiggins@tinyRTX.com 	Created from scratch.
+;   13Aug14 SHiggins@tinyRTX.com 	Converted from PIC16877 to PIC18F452.
+;	02Sep14	SHiggins@tinyRTX.com	Added interrupt protection to ensure trace validity.
+;									However it does not seem to be sufficient, and
+;									calling smTrace in an ISR such as TaskI2C clobbers
+;									both the trace buffer and RAM.  Unresolved.
 ;
 ;*******************************************************************************
 ;
@@ -39,6 +43,7 @@ STRC_Buffer     res     STRC_BUFFER_SIZE    ; Trace buffer.
 STRC_Idx  		res     1                   ; Trace buffer current index.
 STRC_PtrH       res     1                   ; Pointer to current location in trace buffer (high nibble).
 STRC_PtrL       res     1                   ; Pointer to current location in trace buffer (low byte).
+STRC_TempINTCON res     1                   ; Saved copy of INTCON.
 ;
 ;*******************************************************************************
 ;
@@ -72,6 +77,9 @@ STRC_InitLoop
         GLOBAL  STRC_Trace
 STRC_Trace
 ;
+		movff		INTCON, STRC_TempINTCON	; Save current INTCON.GIE.
+		bcf			INTCON, GIE				; Disable interrupts.
+;
 		movff		STRC_PtrL, FSR0L	; Get current buffer addr.
 		movff		STRC_PtrH, FSR0H	;
 		movwf		POSTINC0			; Save input arg in buffer. (Old code did pre-increment.)
@@ -91,5 +99,7 @@ STRC_TraceFull
 STRC_TraceExit
 		movff		FSR0L, STRC_PtrL	; Save pointer to next addr to store trace.
 		movff		FSR0H, STRC_PtrH	;
+		btfsc		STRC_TempINTCON, GIE	; If saved GIE was set..
+		bsf			INTCON, GIE				; ..then re-enable interrupts.
         return
         end

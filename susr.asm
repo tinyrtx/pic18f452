@@ -25,6 +25,11 @@
 ;  29Jul14  SHiggins@tinyRTX.com  Moved UAPP_Timer1Init to MACRO to save stack.
 ;  30Jul14  SHiggins@tinyRTX.com  Reduce from 4 tasks to 3 to reduce stack needs.
 ;  12Aug14  SHiggins@tinyRTX.com  Converted from PIC16877 to PIC18F452.
+;  02Sep14	SHiggins@tinyRTX.com	Removed smTrace calls in SUSR_TaskI2C.
+;									Although smTrace has int protection, it does not
+;									seem to be sufficient, and
+;									calling smTrace in an ISR such as TaskI2C clobbers
+;									both the trace buffer and RAM.  Unresolved.
 ;
 ;*******************************************************************************
 ;
@@ -144,9 +149,9 @@ SUSR_TaskADC
 ;
         GLOBAL  SUSR_TaskI2C
 SUSR_TaskI2C
-        smTraceL STRC_TSK_BEG_I2C
+;;        smTraceL STRC_TSK_BEG_I2C
         call    SI2C_Tbl_HwState        ; Service I2C event.
-        smTraceL STRC_TSK_END_I2C
+;;        smTraceL STRC_TSK_END_I2C
         return
 ;
 ; User handling when I2C message completed.
