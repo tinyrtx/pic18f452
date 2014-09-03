@@ -30,6 +30,7 @@
 ;									seem to be sufficient, and
 ;									calling smTrace in an ISR such as TaskI2C clobbers
 ;									both the trace buffer and RAM.  Unresolved.
+;  03Sep14  SHiggins@tinyRTX.com	Rename SUSR_TaskI2C to SUSR_ISR_I2C, remove SUSR_UdataSec.
 ;
 ;*******************************************************************************
 ;
@@ -42,14 +43,6 @@
         #include <ulcd.inc>
         #include <uadc.inc>
         #include <ui2c.inc>
-;
-;*******************************************************************************
-;
-;  RAM variable definitions.
-;
-SUSR_UdataSec       UDATA
-;
-SUSR_Temp           res     1   ; Place holder, no SUSR variables yet.
 ;
 ;*******************************************************************************
 ;
@@ -133,8 +126,7 @@ SUSR_Task3
         smTraceL STRC_TSK_END_3
         return
 ;
-; User interface to TaskAD.
-; User handling when A/D conversion complete interrupt occurs.
+; User interface to TaskADC.
 ;
         GLOBAL  SUSR_TaskADC
 SUSR_TaskADC
@@ -147,11 +139,11 @@ SUSR_TaskADC
 ;
 ; User handling when I2C event interrupt occurs.
 ;
-        GLOBAL  SUSR_TaskI2C
-SUSR_TaskI2C
-;;        smTraceL STRC_TSK_BEG_I2C
+        GLOBAL  SUSR_ISR_I2C
+SUSR_ISR_I2C
+;;        smTraceL STRC_ISR_BEG_I2C     ; Calls to smTrace during ints currently not supported.
         call    SI2C_Tbl_HwState        ; Service I2C event.
-;;        smTraceL STRC_TSK_END_I2C
+;;        smTraceL STRC_ISR_END_I2C     ; Calls to smTrace during ints currently not supported.
         return
 ;
 ; User handling when I2C message completed.

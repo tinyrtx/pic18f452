@@ -26,6 +26,7 @@
 ;   02Sep14 SHiggins@tinyRTX.com    Save/restore BSR.
 ;   								Remove AD_COMPLETE_TASK and I2C_COMPLETE_TASK options.
 ;									Both now have some interrupt handling and a task.
+;	03Sep14 SHiggins@tinyRTX.com    SISD_Director_CheckI2C now calls SUSR_ISR_I2C.
 ;
 ;*******************************************************************************
 ;
@@ -153,7 +154,7 @@ SISD_Director_CheckI2C
         btfss   PIR1, SSPIF             ; Skip if I2C interrupt flag set.
         bra     SISD_Director_Exit      ; I2C int flag not set, check other ints.
         bcf     PIR1, SSPIF             ; Clear I2C interrupt flag.
-        call    SUSR_TaskI2C            ; User handling when I2C event, must RETURN at end.
+        call    SUSR_ISR_I2C            ; User ISR handling when I2C event.
         bra     SISD_Director_Exit      ; Only execute single interrupt handler.
 ;;    IF I2C_COMPLETE_TASK == SCHEDULE_TASK
 ;;        banksel SRTX_Sched_Cnt_TaskI2C

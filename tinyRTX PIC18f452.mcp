@@ -54,7 +54,6 @@ file_026=.
 file_027=.
 file_028=.
 file_029=.
-file_030=.
 [GENERATED_FILES]
 file_000=no
 file_001=no
@@ -86,7 +85,6 @@ file_026=no
 file_027=no
 file_028=no
 file_029=no
-file_030=no
 [OTHER_FILES]
 file_000=no
 file_001=no
@@ -118,7 +116,6 @@ file_026=no
 file_027=no
 file_028=yes
 file_029=yes
-file_030=yes
 [FILE_INFO]
 file_000=si2c.asm
 file_001=sisd.asm
@@ -150,7 +147,6 @@ file_026=p18f452.inc
 file_027=tinyRTX-PIC18F452.lkr
 file_028=copying.txt
 file_029=copying.lesser.txt
-file_030=tinyRTX PIC18F452.map
 [SUITE_INFO]
 suite_guid={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 suite_state=

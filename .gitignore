@@ -12,7 +12,10 @@
 # Linker object file
 *.cof
 #
-# Machince code file
+# Linker map file
+*.map
+#
+# Machine code file
 *.hex
 #
 # Version control file
