@@ -185,16 +185,16 @@ SRTX_Scheduler_Exit
 ;
 SRTX_Dispatcher
 ;
-;;		movlw	0							; Clear W.
-;;		banksel	SRTX_Sched_Cnt_TaskI2C
-;;        addwf   SRTX_Sched_Cnt_TaskI2C, W   ; Check if non-zero schedule count.
-;;        btfsc   STATUS, Z                   ; Skip if task scheduled.
-;;        bra     SRTX_Dispatcher_CheckADC    ; Task not scheduled, check next task.
-;;        call    SUSR_TaskI2C                ; Invoke task.
-;;		banksel	SRTX_Sched_Cnt_TaskI2C
-;;        decfsz  SRTX_Sched_Cnt_TaskI2C, F   ; Dec schedule count, this invocation done.
-;;        nop                                 ; Trap, task was scheduled again before done.
-;;        bra     SRTX_Dispatcher             ; Test scheduled tasks starting w/highest priority task.
+		movlw	0							; Clear W.
+		banksel	SRTX_Sched_Cnt_TaskI2C
+        addwf   SRTX_Sched_Cnt_TaskI2C, W   ; Check if non-zero schedule count.
+        btfsc   STATUS, Z                   ; Skip if task scheduled.
+        bra     SRTX_Dispatcher_CheckADC    ; Task not scheduled, check next task.
+        call    SUSR_TaskI2C                ; Invoke task.
+		banksel	SRTX_Sched_Cnt_TaskI2C
+        decfsz  SRTX_Sched_Cnt_TaskI2C, F   ; Dec schedule count, this invocation done.
+        nop                                 ; Trap, task was scheduled again before done.
+        bra     SRTX_Dispatcher             ; Test scheduled tasks starting w/highest priority task.
 ;
 SRTX_Dispatcher_CheckADC
 ;

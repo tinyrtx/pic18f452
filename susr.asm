@@ -31,6 +31,7 @@
 ;									calling smTrace in an ISR such as TaskI2C clobbers
 ;									both the trace buffer and RAM.  Unresolved.
 ;  03Sep14  SHiggins@tinyRTX.com	Rename SUSR_TaskI2C to SUSR_ISR_I2C, remove SUSR_UdataSec.
+;                                   New SUSR_TaskI2C now invokes UI2C_MsgTC74ProcessData.
 ;
 ;*******************************************************************************
 ;
@@ -144,6 +145,15 @@ SUSR_ISR_I2C
 ;;        smTraceL STRC_ISR_BEG_I2C     ; Calls to smTrace during ints currently not supported.
         call    SI2C_Tbl_HwState        ; Service I2C event.
 ;;        smTraceL STRC_ISR_END_I2C     ; Calls to smTrace during ints currently not supported.
+        return
+;
+; User interface to TaskI2C.
+;
+        GLOBAL  SUSR_TaskI2C
+SUSR_TaskI2C
+        smTraceL STRC_TSK_BEG_I2C
+        call    UI2C_MsgTC74ProcessData	; Process data from TC74 message.
+        smTraceL STRC_TSK_END_I2C
         return
 ;
 ; User handling when I2C message completed.
