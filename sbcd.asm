@@ -23,15 +23,18 @@
 ; copying.txt) along with tinyRTX.  If not, see <http://www.gnu.org/licenses/>.
 ;
 ; Revision history:
-; 	04Sep03  SHiggins@tinyRTX.com  Created e2bcd16u and bcd2a5p3.
-;   21Jan04  SHiggins@tinyRTX.com  Added e2bcd8u and bcd2a3p0.
-;   10Jun14  SHiggins@tinyRTX.com  Renamed from e2bcd16 to sbcd for conformance.
+;   04Sep03 SHiggins@tinyRTX.com  Created e2bcd16u and bcd2a5p3.
+;   21Jan04 SHiggins@tinyRTX.com  Added e2bcd8u and bcd2a3p0.
+;   10Jun14 SHiggins@tinyRTX.com  Renamed from e2bcd16 to sbcd for conformance.
+;   14May15 Stephen_Higgins@KairosAutonomi.com  
+;               Substitute #include <ucfg.inc> for <p18f452.inc>.
 ;
 ;*******************************************************************************
 ;
-        errorlevel -302	
-#include        <p18f452.inc>
-#include        <sm16.inc>
+        errorlevel -302 
+;
+        #include    <ucfg.inc>  ; Configure board and proc, #include <proc.inc>
+        #include    <sm16.inc>
 ;
 ;**********************************************************************************************
 ;       16 Bit Unsigned Fixed Point Conversion to BCD

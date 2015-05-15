@@ -20,7 +20,9 @@
 ; copying.txt) along with tinyRTX.  If not, see <http://www.gnu.org/licenses/>.
 ;
 ; Revision history:
-;   23Oct03  SHiggins@tinyRTX.com  Created from scratch.
+;   23Oct03 SHiggins@tinyRTX.com  Created from scratch.
+;   14May15 Stephen_Higgins@KairosAutonomi.com  
+;               Add #define SLCD_BUFFER_LINE_SIZE.
 ;
 ;*********************************************************************************************
         NOLIST
@@ -39,3 +41,7 @@
 #define     SLCD_DATA_TRIS      TRISD
 #define     SLCD_DATA_PORT      PORTD
 #define     SLCD_DATA_BITSUSED  0x0f
+;
+#define     SLCD_BUFFER_LINE_SIZE   0x10
+;
+        LIST

@@ -1,8 +1,8 @@
         LIST
 ;*******************************************************************************
-; tinyRTX Filename: uadc.inc (User Analog/Digital Conversion routines)
+; tinyRTX Filename: usio.inc (User Serial I/O communication routines)
 ;
-; Copyright 2014 Sycamore Software, Inc.  ** www.tinyRTX.com **
+; Copyright 2015 Sycamore Software, Inc.  ** www.tinyRTX.com **
 ; Distributed under the terms of the GNU Lesser General Purpose License v3
 ;
 ; This file is part of tinyRTX. tinyRTX is free software: you can redistribute
@@ -19,15 +19,16 @@
 ; copying.txt) along with tinyRTX.  If not, see <http://www.gnu.org/licenses/>.
 ;
 ; Revision history:
-;   27Jan04  SHiggins@tinyRTX.com  Created from scratch.
+;   17Apr15 Stephen_Higgins@KairosAutonomi.com
+;               Created from ui2c.inc.
+;   27Apr15 Stephen_Higgins@KairosAutonomi.com
+;               Added USIO_TxLCDMsgToSIO.
 ;
 ;*******************************************************************************
         NOLIST
 ;
-        EXTERN      UADC_Init
-        EXTERN      UADC_Trigger
-        EXTERN      UADC_RawToASCII
-;
-; UADC data structures.
+        EXTERN      USIO_Init
+        EXTERN      USIO_TxLCDMsgToSIO
+        EXTERN      USIO_MsgReceived
 ;
         LIST

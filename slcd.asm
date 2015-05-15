@@ -22,12 +22,17 @@
 ;   23Oct03 SHiggins@tinyRTX.com Created from scratch.
 ;   29Jul14 SHiggins@tinyRTX.com Changed SLCD_ReadByte to macro to save stack.
 ;   13Aug14 SHiggins@tinyRTX.com Converted from PIC16877 to PIC18F452.
+;   14May15 Stephen_Higgins@KairosAutonomi.com
+;               Minimal slcd.asm if board or chip doesn't support it.
+;               Substitute #include <ucfg.inc> for <p18f452.inc>.
+;               Move #define SLCD_BUFFER_LINE_SIZE to slcduser.inc.
 ;
 ;*******************************************************************************
 ;
-        errorlevel -302	
-	    #include    <p18f452.inc>
-	    #include    <slcduser.inc>
+        errorlevel -302 
+;
+        #include    <ucfg.inc>      ; Configure board and proc, #include <proc.inc>
+        #include    <slcduser.inc>
 ;
 ;*******************************************************************************
 ;
@@ -35,7 +40,6 @@
 ;
 #define     SLCD_LCD_BUSY   7       ; LCD Busy Flag, 1 = busy.
 #define     SLCD_ICTL_RS    7       ; RS flag, 0 = command, 1 = data.
-#define     SLCD_BUFFER_LINE_SIZE   0x10
 ;
 ; SLCD service variables.
 ;
@@ -47,6 +51,14 @@ SLCD_UdataSec       UDATA
 SLCD_BufferLine1    res     SLCD_BUFFER_LINE_SIZE
         GLOBAL  SLCD_BufferLine2
 SLCD_BufferLine2    res     SLCD_BUFFER_LINE_SIZE
+;
+    IF (UCFG_BOARD==UCFG_PD2P_2002 || UCFG_BOARD==UCFG_PD2P_2010) && UCFG_PROC==UCFG_18F452
+;
+;   (UCFG_PD2P_2002 OR UCFG_PD2P_2010 specified) AND UCFG_18F452 specified
+;   **********************************************************************
+;
+;   NOTE: This condition must hold in order to use SLCD services.  That is,
+;       the board must have an LCD and the chip has 40-pins.
 ;
 SLCD_DataByteRcv    res 1
 SLCD_DataByteXmit   res 1
@@ -108,7 +120,7 @@ SLCD_ReadByte  MACRO
 ;
 SLCD_ChkBusy
 ;
-        SLCD_ReadByte		; MACRO to read data byte including LCD Busy Flag.
+        SLCD_ReadByte       ; MACRO to read data byte including LCD Busy Flag.
 ;
         banksel SLCD_DataByteRcv
         btfsc   SLCD_DataByteRcv, SLCD_LCD_BUSY     ; Skip if LCD not busy so OK to exit.
@@ -348,7 +360,7 @@ SLCD_RefreshLine1
         movwf       SLCD_DataXmitCnt            ; Set transmit count to all of Line 1.
 ;
         bsf         SLCD_IctlFlag, SLCD_ICTL_RS ; RS = 1 = Data mode.
-        lfsr       	0, SLCD_BufferLine1        	; Indirect pointer gets start address.
+        lfsr        0, SLCD_BufferLine1         ; Indirect pointer gets start address.
 ;
 SLCD_RefreshLoop1
         movff       POSTINC0, SLCD_DataByteXmit ; Get data at pointer.
@@ -379,7 +391,7 @@ SLCD_RefreshLine2
         movwf       SLCD_DataXmitCnt            ; Set transmit count to all of Line 2.
 ;
         bsf         SLCD_IctlFlag, SLCD_ICTL_RS ; RS = 1 = Data mode.
-        lfsr       	0, SLCD_BufferLine2        	; Indirect pointer gets start address.
+        lfsr        0, SLCD_BufferLine2         ; Indirect pointer gets start address.
 ;
 SLCD_RefreshLoop2
         movff       POSTINC0, SLCD_DataByteXmit ; Get data at pointer.
@@ -389,4 +401,6 @@ SLCD_RefreshLoop2
         bra         SLCD_RefreshLoop2           ; Loop if data count not zero.
 ;                                              
         return
+;
+    ENDIF
         end

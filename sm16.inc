@@ -27,7 +27,7 @@
 ;**********************************************************************************************
         NOLIST
 ;
-		#define	_C		STATUS,0
+        #define _C      STATUS,0
 ;
         EXTERN  AARGB7
         EXTERN  AARGB6
@@ -52,3 +52,5 @@
         EXTERN  TEMP
 ;
         EXTERN  SM16_16x16u
+;
+        LIST

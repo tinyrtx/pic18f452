@@ -19,16 +19,21 @@
 ; copying.txt) along with tinyRTX.  If not, see <http://www.gnu.org/licenses/>.
 ;
 ; Revision history:
-;   16Oct03  SHiggins@tinyRTX.com  Created from scratch.
-;   15Aug14  SHiggins@tinyRTX.com  Added SRTX_ComputedBraRCall and SRTX_ComputedGotoCall.
+;   16Oct03  SHiggins@tinyRTX.com   Created from scratch.
+;   15Aug14  SHiggins@tinyRTX.com   Added SRTX_ComputedBraRCall and SRTX_ComputedGotoCall.
+;   17Apr15  Stephen_Higgins@KairosAutonomi.com
+;                                   Added SRTX_Sched_Cnt_TaskSIO.
 ;
 ;*******************************************************************************
         NOLIST
 ;
         EXTERN      SRTX_Sched_Cnt_TaskADC
         EXTERN      SRTX_Sched_Cnt_TaskI2C
+        EXTERN      SRTX_Sched_Cnt_TaskSIO
 ;
-        EXTERN	    SRTX_Init
-        EXTERN	    SRTX_Scheduler
-        EXTERN	    SRTX_ComputedBraRCall
-        EXTERN	    SRTX_ComputedGotoCall
+        EXTERN      SRTX_Init
+        EXTERN      SRTX_Scheduler
+        EXTERN      SRTX_ComputedBraRCall
+        EXTERN      SRTX_ComputedGotoCall
+;
+        LIST

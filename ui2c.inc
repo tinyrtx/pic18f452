@@ -24,7 +24,11 @@
 ;
 ;*******************************************************************************
 ;
+        NOLIST
+;
         EXTERN      UI2C_Init
         EXTERN      UI2C_MsgTC74
         EXTERN      UI2C_MsgDone
-		EXTERN      UI2C_MsgTC74ProcessData
+        EXTERN      UI2C_MsgTC74ProcessData
+;
+        LIST

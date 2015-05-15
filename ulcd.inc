@@ -22,7 +22,7 @@
 ;   23Oct03  SHiggins@tinyRTX.com  Created from scratch.
 ;
 ;*******************************************************************************
-		NOLIST
+        NOLIST
 ;
         EXTERN      ULCD_Init
         EXTERN      ULCD_RefreshLine1
@@ -32,3 +32,5 @@
 ;
         EXTERN      ULCD_VoltAscii0
         EXTERN      ULCD_TempAscii0
+;
+        LIST

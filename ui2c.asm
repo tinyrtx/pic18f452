@@ -23,14 +23,17 @@
 ;   13Aug14 SHiggins@tinyRTX.com Converted from PIC16877 to PIC18F452.
 ;   15Aug14 SHiggins@tinyRTX.com Converted PIC16 jump table to SRTX_ComputedBraRCall.
 ;   18Aug14 SHiggins@tinyRTX.com Minor optimizations.
-;   03Sep14 SHiggins@tinyRTX.com    When msgs complete invoke UI2C_MsgTC74Complete
-;									to schedule task. Then SRTX_Dispatcher will invoke
-;									UI2C_MsgTC74ProcessData as proper task.
+;   03Sep14 SHiggins@tinyRTX.com
+;               When msgs complete invoke UI2C_MsgTC74Complete to schedule task.
+;               Then SRTX_Dispatcher will invoke UI2C_MsgTC74ProcessData as task.
+;   14May15 Stephen_Higgins@KairosAutonomi.com  
+;               Substitute #include <ucfg.inc> for <p18f452.inc>.
 ;
 ;*******************************************************************************
 ;
-        errorlevel -302	
-        #include    <p18f452.inc>
+        errorlevel -302 
+;
+        #include    <ucfg.inc>  ; Configure board and proc, #include <proc.inc>
         #include    <srtx.inc>
         #include    <strc.inc>
         #include    <si2c.inc>
@@ -38,7 +41,6 @@
         #include    <sbcd.inc>
         #include    <ulcd.inc>
 ;
-		LIST
 ;*******************************************************************************
 ;
 ; User I2C defines.
@@ -78,7 +80,7 @@ UI2C_Tbl_MsgState
 ;
         banksel UI2C_MsgState
         movf    UI2C_MsgState, W        ; UI2C_MsgState application message state.
-        call	SRTX_ComputedBraRCall	; W = offset, index into state machine jump table.
+        call    SRTX_ComputedBraRCall   ; W = offset, index into state machine jump table.
 ;
 ; Processing for each state                                                             I2_MsgState(hex)
 ;
@@ -86,7 +88,7 @@ UI2C_Tbl_MsgState
         bra     UI2C_MsgTC74ReadStatus  ; S 0x9a(W) (ACK) 0x01(W) (ACK) RS 0x9b(R) (ACK) 0x?? NACK P =  0
         bra     UI2C_MsgTC74CheckStatus ; Check received status, retry or proceed                    =  1
         bra     UI2C_MsgTC74ReadData    ; S 0x9a(W) (ACK) 0x00(W) (ACK) RS 0x9b(R) (ACK) 0x?? NACK P =  2
-        bra     UI2C_MsgTC74Complete	; Message complete, schedule task to process temperature     =  3
+        bra     UI2C_MsgTC74Complete    ; Message complete, schedule task to process temperature     =  3
 ;
 ; NOTE: THIS UI2C_Tbl_MsgState TABLE DEFINITION IS LINKED TO #define's ABOVE.
 ;
@@ -105,10 +107,10 @@ UI2C_Init
 ;  BRG reload value = ( Fosc / 4 )/ I2C bit rate) - 1
 ;                   = ( 4 Mhz / 4 )/ 100kHz ) - 1 = 9 = 0x09
 ;
-;		movlw   0x09            ; BRG reload value(-1).
-		movlw   0x05
-		banksel SSPADD
-		movwf   SSPADD          ; Init I2C BRG reload value.
+;       movlw   0x09            ; BRG reload value(-1).
+        movlw   0x05
+        banksel SSPADD
+        movwf   SSPADD          ; Init I2C BRG reload value.
 ;
 ; TRISC already configured as inputs for SDA and SCL.
 ;
@@ -124,7 +126,7 @@ UI2C_Init
         movlw   (1<<SMP)|(0<<CKE)|(0<<I2C_DATA)|(0<<I2C_STOP)|(0<<I2C_START)|(0<<I2C_READ)|(0<<UA)|(0<<BF)
         banksel SSPSTAT
         movwf   SSPSTAT         ; SMP slew for 100kHz.
-		return
+        return
 ;
 ;*******************************************************************************
 ;
@@ -249,15 +251,15 @@ UI2C_MsgTC74Complete
 ;
 ; Save the raw temperature data in the previous message from the TC74 device.
 ;
-        movff   SI2C_DataByteRcv00, UI2C_TC74Data	; Get TC74 data from msg read data byte.
+        movff   SI2C_DataByteRcv00, UI2C_TC74Data   ; Get TC74 data from msg read data byte.
 ;
         banksel SRTX_Sched_Cnt_TaskI2C
-       	incfsz  SRTX_Sched_Cnt_TaskI2C, F   ; Increment task schedule count.
+        incfsz  SRTX_Sched_Cnt_TaskI2C, F   ; Increment task schedule count.
         goto    UI2C_MsgTC74CompleteExit    ; Task schedule count did not rollover.
         decf    SRTX_Sched_Cnt_TaskI2C, F   ; Max task schedule count.
 ;
 UI2C_MsgTC74CompleteExit
-		return
+        return
 ;
 ;*******************************************************************************
 ;
@@ -283,15 +285,15 @@ UI2C_MsgTC74ProcessData
 ;
 ; Convert from 3-digit BCD to 3 ASCII chars, no decimal places.
 ;
-		movff	AARGB0, BARGB0			; BARGB0-B1 = result in BCD.
-		movff	AARGB1, BARGB1
+        movff   AARGB0, BARGB0          ; BARGB0-B1 = result in BCD.
+        movff   AARGB1, BARGB1
 ;
         call    bcd2a3p0                ; AARGB0-B2 = result in ASCII.
 ;
-		lfsr	0, ULCD_TempAscii0		; Indirect pointer gets dest start address.
-		movff	AARGB0, POSTINC0		; Char 0 (temp hundredths) to dest ASCII buffer.
-		movff	AARGB1, POSTINC0		; Char 0 (temp tenths) to dest ASCII buffer.
-		movff	AARGB2, INDF0			; Char 0 (temp ones) to dest ASCII buffer.
+        lfsr    0, ULCD_TempAscii0      ; Indirect pointer gets dest start address.
+        movff   AARGB0, POSTINC0        ; Char 0 (temp hundredths) to dest ASCII buffer.
+        movff   AARGB1, POSTINC0        ; Char 0 (temp tenths) to dest ASCII buffer.
+        movff   AARGB2, INDF0           ; Char 0 (temp ones) to dest ASCII buffer.
 ;
         return
         end

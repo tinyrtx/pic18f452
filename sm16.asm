@@ -22,11 +22,14 @@
 ; 23Sep03  SHiggins@tinyRTX.com  Created from scratch.
 ; 10Jun14  SHiggins@tinyRTX.com  Renamed from ma16 to sm16 for conformance.
 ; 21Aug14  SHiggins@tinyRTX.com  Removed LOOPCOUNT, added SM16_16x16u.
+;   14May15 Stephen_Higgins@KairosAutonomi.com  
+;               Substitute #include <ucfg.inc> for <p18f452.inc>.
 ;
 ;*******************************************************************************
 ;
-        errorlevel -302	
-	    #include    <p18f452.inc>
+        errorlevel -302 
+;
+        #include    <ucfg.inc>  ; Configure board and proc, #include <proc.inc>
 ;
 ;*******************************************************************************
 ;
@@ -85,37 +88,37 @@ SM16_CodeSec    CODE
         global  SM16_16x16u
 SM16_16x16u
 ;
-		movff	AARGB0, TEMPB0
-		movff	AARGB1, TEMPB1
+        movff   AARGB0, TEMPB0
+        movff   AARGB1, TEMPB1
 ;
-		banksel	BARGB0
-		movf	BARGB0, W
-		mulwf	TEMPB0			; AARGB0 * BARGB0 -> PRODH:PRODL.
-		movff	PRODH, AARGB0
-		movff	PRODL, AARGB1
+        banksel BARGB0
+        movf    BARGB0, W
+        mulwf   TEMPB0          ; AARGB0 * BARGB0 -> PRODH:PRODL.
+        movff   PRODH, AARGB0
+        movff   PRODL, AARGB1
 ;
-		movf	BARGB1, W
-		mulwf	TEMPB1			; AARGB1 * BARGB1 -> PRODH:PRODL.
-		movff	PRODH, AARGB2
-		movff	PRODL, AARGB3
+        movf    BARGB1, W
+        mulwf   TEMPB1          ; AARGB1 * BARGB1 -> PRODH:PRODL.
+        movff   PRODH, AARGB2
+        movff   PRODL, AARGB3
 ;
-		movf	BARGB0, W
-		mulwf	TEMPB1			; AARGB1 * BARGB0 -> PRODH:PRODL.
-		movf	PRODL, W		; Add cross products to existing results.
-		addwf	AARGB2, F
-		movf	PRODH, W
-		addwfc	AARGB1, F
-		clrf	WREG
-		addwfc	AARGB0, F
+        movf    BARGB0, W
+        mulwf   TEMPB1          ; AARGB1 * BARGB0 -> PRODH:PRODL.
+        movf    PRODL, W        ; Add cross products to existing results.
+        addwf   AARGB2, F
+        movf    PRODH, W
+        addwfc  AARGB1, F
+        clrf    WREG
+        addwfc  AARGB0, F
 ;
-		movf	BARGB1, W
-		mulwf	TEMPB0			; AARGB0 * BARGB1 -> PRODH:PRODL.
-		movf	PRODL, W		; Add cross products to existing results.
-		addwf	AARGB2, F
-		movf	PRODH, W
-		addwfc	AARGB1, F
-		clrf	WREG
-		addwfc	AARGB0, F
+        movf    BARGB1, W
+        mulwf   TEMPB0          ; AARGB0 * BARGB1 -> PRODH:PRODL.
+        movf    PRODL, W        ; Add cross products to existing results.
+        addwf   AARGB2, F
+        movf    PRODH, W
+        addwfc  AARGB1, F
+        clrf    WREG
+        addwfc  AARGB0, F
 ;
-		return
+        return
         end

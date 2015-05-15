@@ -21,8 +21,8 @@
 ; Revision history:
 ;   17Oct03  SHiggins@tinyRTX.com  Created from scratch.
 ;   30Jul14  SHiggins@tinyRTX.com  Reduce from 4 tasks to 3 to reduce stack needs.
-;   02Sep14  SHiggins@tinyRTX.com  	Remove AD_COMPLETE_TASK and I2C_COMPLETE_TASK options.
-;									Both now have some interrupt handling and a task.
+;   02Sep14  SHiggins@tinyRTX.com   Remove AD_COMPLETE_TASK and I2C_COMPLETE_TASK options.
+;                                   Both now have some interrupt handling and a task.
 ;
 ;*******************************************************************************
        NOLIST
@@ -42,6 +42,8 @@ SRTX_CNT_INIT_TASK3     EQU     1
 ;   SRTX-timer events which must occur before the task is again scheduled.
 ; Allowed range is (1 - 255).
 ;
-SRTX_CNT_RELOAD_TASK1   EQU     0x01	;  1 = 100 ms
-SRTX_CNT_RELOAD_TASK2   EQU     0x0a	; 10 = 1.000 sec
-SRTX_CNT_RELOAD_TASK3   EQU     0x14	; 20 = 2.000 sec
+SRTX_CNT_RELOAD_TASK1   EQU     0x01    ;  1 = 100 ms
+SRTX_CNT_RELOAD_TASK2   EQU     0x0a    ; 10 = 1.000 sec
+SRTX_CNT_RELOAD_TASK3   EQU     0x14    ; 20 = 2.000 sec
+;
+        LIST

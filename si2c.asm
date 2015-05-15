@@ -24,17 +24,21 @@
 ;   12Aug14  SHiggins@tinyRTX.com Converted from PIC16877 to PIC18F452.
 ;   15Aug14  SHiggins@tinyRTX.com Converted PIC16 jump table to SRTX_ComputedBraRCall.
 ;   18Aug14  SHiggins@tinyRTX.com Corrections due to testing.
+;   16Apr15  Stephen_Higgins@KairosAutonomi.com Removed #include <strc.inc>.
+;   14May15  Stephen_Higgins@KairosAutonomi.com  
+;               Substitute #include <ucfg.inc> for <p18f452.inc>.
+;               Remove unnecessary banksel's.
 ;
 ;*******************************************************************************
 ;
-        errorlevel -302	
-	    #include    <p18f452.inc>
-	    #include    <srtx.inc>
-	    #include    <si2cuser.inc>
-	    #include    <susr.inc>
-	    #include    <strc.inc>
+        errorlevel -302 
 ;
-		LIST
+        #include    <ucfg.inc>  ; Configure board and proc, #include <proc.inc>
+        #include    <srtx.inc>
+        #include    <si2cuser.inc>
+        #include    <susr.inc>
+;
+        LIST
 ;*******************************************************************************
 ;
 ; SI2C service variables.
@@ -91,8 +95,8 @@ SI2C_Tbl_HwState
 ; Execute I2C hardware handling due to I2C interrupt based on I2_HwState.
 ;
         banksel SI2C_HwState
-        movf    SI2C_HwState, W     	; Get SI2C hardware state.
-        call	SRTX_ComputedBraRCall	; W = offset, index into state machine jump table.
+        movf    SI2C_HwState, W         ; Get SI2C hardware state.
+        call    SRTX_ComputedBraRCall   ; W = offset, index into state machine jump table.
 ;
 ; State processing: Various error conditions.                       SI2C_HwState
 ;
@@ -100,23 +104,23 @@ SI2C_Tbl_HwState
 ;
 ; State processing: multibyte data write.                           SI2C_HwState
 ;
-		bra 	SI2C_StartEnable    ; Start enable (read or write)      = 1
-		bra 	SI2C_SendWriteAddr  ; Address for data write            = 2
-		bra 	SI2C_WriteData      ; Write data                        = 3
-     	bra  	SI2C_StopEnable     ; Stop enable (read or write)       = 4
+        bra     SI2C_StartEnable    ; Start enable (read or write)      = 1
+        bra     SI2C_SendWriteAddr  ; Address for data write            = 2
+        bra     SI2C_WriteData      ; Write data                        = 3
+        bra     SI2C_StopEnable     ; Stop enable (read or write)       = 4
         bra     SI2C_MsgDone        ; Msg completed, return to user     = 5
 ;
 ; State processing: multibyte data write/multibyte data read.       SI2C_HwState
 ;
-		bra 	SI2C_StartEnable    ; Start enable (read or write)      = 6
-		bra 	SI2C_SendWriteAddr  ; Address for data write            = 7
-		bra 	SI2C_WriteData      ; Write data                        = 8
-		bra 	SI2C_RestartEnable  ; Restart enable (read or write)    = 9
-		bra 	SI2C_SendReadAddr   ; Address for data read             = A
-		bra 	SI2C_ReceiveEnable  ; Receive enable (read)             = B
-		bra 	SI2C_ReadData       ; Read data                         = C
+        bra     SI2C_StartEnable    ; Start enable (read or write)      = 6
+        bra     SI2C_SendWriteAddr  ; Address for data write            = 7
+        bra     SI2C_WriteData      ; Write data                        = 8
+        bra     SI2C_RestartEnable  ; Restart enable (read or write)    = 9
+        bra     SI2C_SendReadAddr   ; Address for data read             = A
+        bra     SI2C_ReceiveEnable  ; Receive enable (read)             = B
+        bra     SI2C_ReadData       ; Read data                         = C
         bra     SI2C_AckNackDone    ; ACK or NACK complete              = D
-     	bra  	SI2C_StopEnable     ; Stop enable (read or write)       = E
+        bra     SI2C_StopEnable     ; Stop enable (read or write)       = E
         bra     SI2C_MsgDone        ; Msg completed, return to user     = F
 ;
 ; NOTE: THESE table definitions ARE LINKED TO SI2C_Tbl_HwState #define's ABOVE.
@@ -125,7 +129,7 @@ SI2C_Tbl_HwState
 ;
 ; SI2C Services.
 ;
-SI2C_CodeSec    CODE	
+SI2C_CodeSec    CODE    
 ;
 ;*******************************************************************************
 ;
@@ -160,11 +164,9 @@ SI2C_StartEnable
         bcf     SI2C_Flags, SI2C_Flag_SlvAckError   ; Clear slave ACK error flag.
         bcf     SI2C_Flags, SI2C_Flag_ChkAck        ; Don't check slave ACK after this action.
 ;
-        incf	SI2C_HwState, F                     ; Update SI2C_HwState state var to next state.
+        incf    SI2C_HwState, F                     ; Update SI2C_HwState state var to next state.
 ;
-        banksel PIE1
         bsf     PIE1, SSPIE                         ; Enable I2C interrupts.
-        banksel	SSPCON2    
         bsf     SSPCON2, SEN                        ; Initiate I2C bus start.
         return
 ;
@@ -179,23 +181,19 @@ SI2C_RestartEnable
         banksel SI2C_Flags
         btfss   SI2C_Flags, SI2C_Flag_ChkAck        ; Check slave ACK?
         bra     SI2C_RestartEnable_AckOK            ; No, skip check.
-        banksel SSPCON2
         btfss   SSPCON2, ACKSTAT                    ; Test for slave ACK.
         bra     SI2C_RestartEnable_AckOK            ; Slave ACK OK.
 ;
 ; Bad Slave ACK, force transition to error state.
 ;
-        banksel SI2C_Flags
         movlw   SI2C_HWSTATE_SLAVEACKERROR          ; State for slave ack error.
         movwf   SI2C_HwState                        ; Reset SI2C_HwState with error state.
         bra     SI2C_Tbl_HwState                    ; Execute state based on SI2C_HwState.
 ;
 SI2C_RestartEnable_AckOK
 ;
-        banksel SI2C_Flags
         bcf     SI2C_Flags, SI2C_Flag_ChkAck        ; Don't check slave ACK after this action.
-        incf	SI2C_HwState, F                     ; Update SI2C_HwState state var to next state.
-        banksel	SSPCON2    
+        incf    SI2C_HwState, F                     ; Update SI2C_HwState state var to next state.
         bsf     SSPCON2, RSEN                       ; Initiate I2C bus restart.
         return
 ;
@@ -212,23 +210,19 @@ SI2C_ReceiveEnable
         banksel SI2C_Flags
         btfss   SI2C_Flags, SI2C_Flag_ChkAck        ; Check slave ACK?
         bra     SI2C_ReceiveEnable_AckOK            ; No, skip check.
-        banksel SSPCON2
         btfss   SSPCON2, ACKSTAT                    ; Test for slave ACK.
         bra     SI2C_ReceiveEnable_AckOK            ; Slave ACK OK.
 ;
 ; Bad Slave ACK, force transition to error state.
 ;
-        banksel SI2C_Flags
         movlw   SI2C_HWSTATE_SLAVEACKERROR          ; State for slave ack error.
         movwf   SI2C_HwState                        ; Reset SI2C_HwState with error state.
         bra     SI2C_Tbl_HwState                    ; Execute state based on SI2C_HwState.
 ;
 SI2C_ReceiveEnable_AckOK
 ;
-        banksel SI2C_Flags
         bcf     SI2C_Flags, SI2C_Flag_ChkAck        ; Don't check slave ACK after this action.
-        incf	SI2C_HwState, F                     ; Update SI2C_HwState state var to next state.
-        banksel	SSPCON2    
+        incf    SI2C_HwState, F                     ; Update SI2C_HwState state var to next state.
         bsf     SSPCON2, RCEN                       ; Initiate I2C receive.
         return
 ;
@@ -243,23 +237,19 @@ SI2C_StopEnable
         banksel SI2C_Flags
         btfss   SI2C_Flags, SI2C_Flag_ChkAck        ; Check slave ACK?
         bra     SI2C_StopEnable_AckOK               ; No, skip check.
-        banksel SSPCON2
         btfss   SSPCON2, ACKSTAT                    ; Test for slave ACK.
         bra     SI2C_StopEnable_AckOK               ; Slave ACK OK.
 ;
 ; Bad Slave ACK, force transition to error state.
 ;
-        banksel SI2C_Flags
         movlw   SI2C_HWSTATE_SLAVEACKERROR          ; State for slave ack error.
         movwf   SI2C_HwState                        ; Reset SI2C_HwState with error state.
         bra     SI2C_Tbl_HwState                    ; Execute state based on SI2C_HwState.
 ;
 SI2C_StopEnable_AckOK
 ;
-        banksel SI2C_Flags
         bcf     SI2C_Flags, SI2C_Flag_ChkAck        ; Don't check slave ACK after this action.
-        incf	SI2C_HwState, F                     ; Update SI2C_HwState state var to next state.
-        banksel SSPCON2
+        incf    SI2C_HwState, F                     ; Update SI2C_HwState state var to next state.
         bsf     SSPCON2, PEN                        ; Initiate I2C bus stop.
         return
 ;
@@ -273,7 +263,6 @@ SI2C_StopEnable_AckOK
 ;
 SI2C_MsgDone
 ;
-        banksel PIE1
         bcf     PIE1, SSPIE                     ; Disable I2C interrupts.
         banksel SI2C_Flags
         bcf     SI2C_Flags, SI2C_Flag_InUse     ; Clear "in-use" flag.
@@ -289,17 +278,16 @@ SI2C_MsgDone
 SI2C_SendWriteAddr
 ;
         banksel SI2C_HwState
-        incf	SI2C_HwState, F                 ; Update SI2C_HwState state var to next state.
+        incf    SI2C_HwState, F                 ; Update SI2C_HwState state var to next state.
         bsf     SI2C_Flags, SI2C_Flag_ChkAck    ; Check slave ACK after this action.
 ;
-		movlw	high SI2C_DataByteXmt00			; Init DataPtrXmt with addr of first xmt byte.
-		movwf	SI2C_DataPtrXmtH
-		movlw	low SI2C_DataByteXmt00
-		movwf	SI2C_DataPtrXmtL
+        movlw   high SI2C_DataByteXmt00         ; Init DataPtrXmt with addr of first xmt byte.
+        movwf   SI2C_DataPtrXmtH
+        movlw   low SI2C_DataByteXmt00
+        movwf   SI2C_DataPtrXmtL
 ;
         bcf     SI2C_AddrSlave, 0               ; Slave addr bit 0 cleared = write data operation.          
         movf    SI2C_AddrSlave, W               ; Get 7-bit slave address with bit 0 clear.
-        banksel SSPBUF
         movwf   SSPBUF                          ; Write slave address on I2C bus.
         return
 ;
@@ -313,17 +301,16 @@ SI2C_SendWriteAddr
 SI2C_SendReadAddr
 ;
         banksel SI2C_HwState
-        incf	SI2C_HwState, F                 ; Update SI2C_HwState state var to next state.
+        incf    SI2C_HwState, F                 ; Update SI2C_HwState state var to next state.
         bsf     SI2C_Flags, SI2C_Flag_ChkAck    ; Check slave ACK after this action.
 ;
-		movlw	high SI2C_DataByteRcv00			; Init DataPtrRcv with addr of first rcv byte.
-		movwf	SI2C_DataPtrRcvH
-		movlw	low SI2C_DataByteRcv00
-		movwf	SI2C_DataPtrRcvL
+        movlw   high SI2C_DataByteRcv00         ; Init DataPtrRcv with addr of first rcv byte.
+        movwf   SI2C_DataPtrRcvH
+        movlw   low SI2C_DataByteRcv00
+        movwf   SI2C_DataPtrRcvL
 ;
         bsf     SI2C_AddrSlave, 0               ; Slave addr bit 1 set = read data operation.          
         movf    SI2C_AddrSlave, W               ; Get 7-bit slave address with bit 0 clear.
-        banksel SSPBUF
         movwf   SSPBUF                          ; Write slave address on I2C bus.
         return
 ;
@@ -341,35 +328,31 @@ SI2C_WriteData
         banksel SI2C_Flags
         btfss   SI2C_Flags, SI2C_Flag_ChkAck        ; Check slave ACK?
         bra     SI2C_WriteData_AckOK                ; No, skip check.
-        banksel SSPCON2
         btfss   SSPCON2, ACKSTAT                    ; Test for slave ACK.
         bra     SI2C_WriteData_AckOK                ; Slave ACK OK.
 ;
 ; Bad Slave ACK, force transition to error state.
 ;
-        banksel SI2C_Flags
         movlw   SI2C_HWSTATE_SLAVEACKERROR          ; State for slave ack error.
         movwf   SI2C_HwState                        ; Reset SI2C_HwState with error state.
         bra     SI2C_Tbl_HwState                    ; Execute state based on SI2C_HwState.
 ;
 SI2C_WriteData_AckOK
 ;
-        banksel	SI2C_Flags
         bsf     SI2C_Flags, SI2C_Flag_ChkAck    ; Check slave ACK after this action.
 ;
-		movff	SI2C_DataPtrXmtH, FSR0H			; Get write data pointer.
-		movff	SI2C_DataPtrXmtL, FSR0L
+        movff   SI2C_DataPtrXmtH, FSR0H         ; Get write data pointer.
+        movff   SI2C_DataPtrXmtL, FSR0L
         movf    POSTINC0, W                     ; Copy write data byte into W, and inc ptr.
- 		movff	FSR0H, SI2C_DataPtrXmtH			; Save incremented pointer.
-		movff	FSR0L, SI2C_DataPtrXmtL
+        movff   FSR0H, SI2C_DataPtrXmtH         ; Save incremented pointer.
+        movff   FSR0L, SI2C_DataPtrXmtL
 ;
-        decfsz	SI2C_DataCntXmt, F              ; Decr count of remaining write data bytes.
+        decfsz  SI2C_DataCntXmt, F              ; Decr count of remaining write data bytes.
         bra     SI2C_WriteData_SendByte         ; More write data bytes remain, SI2C_HwState untouched.
-        incf	SI2C_HwState, F                 ; This is last datum, update SI2C_HwState to next state.
+        incf    SI2C_HwState, F                 ; This is last datum, update SI2C_HwState to next state.
 ;
 SI2C_WriteData_SendByte
 ;
-        banksel SSPBUF
         movwf   SSPBUF                          ; Write data to I2C bus.
         return
 ;
@@ -384,28 +367,26 @@ SI2C_WriteData_SendByte
 ;
 SI2C_ReadData
 ;
-        banksel	SI2C_Flags
+        banksel SI2C_Flags
         bcf     SI2C_Flags, SI2C_Flag_ChkAck    ; Don't check slave ACK after this action.
         incf    SI2C_HwState, F                 ; Update SI2C_HwState to next state.
 ;
-		movff	SI2C_DataPtrRcvH, FSR0H			; Get read data pointer.
-		movff	SI2C_DataPtrRcvL, FSR0L
+        movff   SI2C_DataPtrRcvH, FSR0H         ; Get read data pointer.
+        movff   SI2C_DataPtrRcvL, FSR0L
         movff   SSPBUF, POSTINC0                ; Copy data byte from SSP to buffer, and inc ptr.
- 		movff	FSR0H, SI2C_DataPtrRcvH			; Save incremented pointer.
-		movff	FSR0L, SI2C_DataPtrRcvL
+        movff   FSR0H, SI2C_DataPtrRcvH         ; Save incremented pointer.
+        movff   FSR0L, SI2C_DataPtrRcvL
 ;
         decfsz  SI2C_DataCntRcv, F              ; Decr count of remaining read data bytes.
         bra     SI2C_ReadData_SendAck           ; More read data bytes remain, send ACK.
 ;
 SI2C_ReadData_SendNack
 ;
-        banksel	SSPCON2    
         bsf     SSPCON2, ACKDT                  ; Set ACKDT to send NACK.
         bra     SI2C_ReadData_Exit
 ;
 SI2C_ReadData_SendAck
 ;
-        banksel	SSPCON2    
         bcf     SSPCON2, ACKDT                  ; Clear ACKDT to send ACK.
 ;
 SI2C_ReadData_Exit
@@ -443,7 +424,6 @@ SI2C_AckNackDone
 SI2C_AckNackDone_ReceiveEnable
 ;
         decf    SI2C_HwState, F                 ; Update SI2C_HwState to prev state (SI2C_ReadData).
-        banksel	SSPCON2    
         bsf     SSPCON2, RCEN                   ; Initiate I2C receive.
         return
 ;
