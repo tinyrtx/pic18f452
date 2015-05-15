@@ -27,7 +27,7 @@
 ;   16Apr15  Stephen_Higgins@KairosAutonomi.com Removed #include <strc.inc>.
 ;   14May15  Stephen_Higgins@KairosAutonomi.com  
 ;               Substitute #include <ucfg.inc> for <p18f452.inc>.
-;               Remove unnecessary banksel's.
+;               Removed unnecessary banksel's for SFR's in access RAM.
 ;
 ;*******************************************************************************
 ;

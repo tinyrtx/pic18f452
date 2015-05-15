@@ -32,11 +32,22 @@
 ; NOTE: User is also responsible for proper hardware initialization so
 ;   hardware addressed by these #defines may be used.
 ;
+    IF UCFG_BOARD==UCFG_PD2P_2002
 #define     SLCD_CTRL_TRIS      TRISA
 #define     SLCD_CTRL_PORT      PORTA
 #define     SLCD_CTRL_E         1
 #define     SLCD_CTRL_RW        2
 #define     SLCD_CTRL_RS        3
+    ENDIF
+;
+    IF UCFG_BOARD==UCFG_PD2P_2010
+#define     SLCD_CTRL_TRIS      TRISD
+#define     SLCD_CTRL_PORT      PORTD
+#define     SLCD_CTRL_PWR       7
+#define     SLCD_CTRL_E         6
+#define     SLCD_CTRL_RW        5
+#define     SLCD_CTRL_RS        4
+    ENDIF
 ;
 #define     SLCD_DATA_TRIS      TRISD
 #define     SLCD_DATA_PORT      PORTD

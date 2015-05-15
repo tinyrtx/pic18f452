@@ -26,6 +26,8 @@
 ;               Minimal slcd.asm if board or chip doesn't support it.
 ;               Substitute #include <ucfg.inc> for <p18f452.inc>.
 ;               Move #define SLCD_BUFFER_LINE_SIZE to slcduser.inc.
+;               Init LCD power pin if needed.
+;               Removed unnecessary banksel's for SFR's in access RAM.
 ;
 ;*******************************************************************************
 ;
@@ -78,25 +80,21 @@ SLCD_CodeSec   CODE
 ;
 SLCD_ReadByte  MACRO
 ;
-        banksel     SLCD_DATA_TRIS
         movlw       SLCD_DATA_BITSUSED
         iorwf       SLCD_DATA_TRIS, F               ; Lower 4 bits of port become inputs.
 ;
-        banksel     SLCD_CTRL_PORT
         bcf         SLCD_CTRL_PORT, SLCD_CTRL_RS    ; RS = 0 = Command mode.
         bsf         SLCD_CTRL_PORT, SLCD_CTRL_RW    ; RW = 1 = Read mode.
         bsf         SLCD_CTRL_PORT, SLCD_CTRL_E     ; E  = 1 = Begin action. (Read high nibble.)
         nop
         nop
 ;
-        banksel     SLCD_DATA_PORT
         movf        SLCD_DATA_PORT, W           ; Read LCD data high nibble from data port low nibble.
         andlw       SLCD_DATA_BITSUSED          ; Save only valid bits from data port.
         banksel     SLCD_DataByteRcv
         movwf       SLCD_DataByteRcv            ; Save valid bits in result low nibble.
         swapf       SLCD_DataByteRcv, F         ; Save valid bits in result high nibble.
 ;
-        banksel     SLCD_CTRL_PORT
         bcf         SLCD_CTRL_PORT, SLCD_CTRL_E ; E  = 0 = End   action.
         nop
         nop
@@ -104,13 +102,11 @@ SLCD_ReadByte  MACRO
         nop
         nop
 ;
-        banksel     SLCD_DATA_PORT
         movf        SLCD_DATA_PORT, W           ; Read LCD data low  nibble from data port.
         andlw       SLCD_DATA_BITSUSED          ; Save only valid bits from data port.
         banksel     SLCD_DataByteRcv
         addwf       SLCD_DataByteRcv, F         ; Save valid bits in result low nibble.
 ;
-        banksel     SLCD_CTRL_PORT
         bcf         SLCD_CTRL_PORT, SLCD_CTRL_E ; E  = 0 = End   action.
         ENDM
 ;
@@ -154,7 +150,6 @@ SLCD_WriteByte
 ;
 SLCD_WriteNibble  
 ;
-        banksel     SLCD_DATA_TRIS
         movlw       SLCD_DATA_BITSUSED              ; Bits used are set, unused are clear.
         xorlw       0xff                            ; Bits used are clear, unused are set.
         andwf       SLCD_DATA_TRIS, F               ; Lower 4 bits of port become outputs.
@@ -164,12 +159,10 @@ SLCD_WriteNibble
         bra         SLCD_WriteNibbleCmd
 ;
 SLCD_WriteNibbleData
-        banksel     SLCD_CTRL_PORT
         bsf         SLCD_CTRL_PORT, SLCD_CTRL_RS    ; RS = 1 = Data mode.
         bra         SLCD_WriteNibble1
 ;
 SLCD_WriteNibbleCmd
-        banksel     SLCD_CTRL_PORT
         bcf         SLCD_CTRL_PORT, SLCD_CTRL_RS    ; RS = 0 = Command mode.
 ;
 SLCD_WriteNibble1
@@ -180,7 +173,6 @@ SLCD_WriteNibble1
 ;
 ; Write lower nibble taking care not to disturb upper nibble port data which may include active outputs.
 ;
-        banksel     SLCD_DATA_PORT
         movlw       SLCD_DATA_BITSUSED              ; Bits used are set, unused are clear.
         xorlw       0xff                            ; Bits used are clear, unused are set.
         andwf       SLCD_DATA_PORT, F               ; Lower 4 bits of port are cleared.
@@ -189,12 +181,10 @@ SLCD_WriteNibble1
         movlw       SLCD_DATA_BITSUSED              ; Bits used are set, unused are clear.
         andwf       SLCD_DataByteXmit, W            ; Get low 4 bits of xmit data, high 4 bits are cleared.
 ;
-        banksel     SLCD_DATA_PORT
         iorwf       SLCD_DATA_PORT, F               ; Send low 4 bits to data port.
         nop
         nop
 ;
-        banksel     SLCD_CTRL_PORT
         bcf         SLCD_CTRL_PORT, SLCD_CTRL_E     ; E  = 0 = End   action.
         return
 ;
@@ -243,15 +233,21 @@ SLCD_Delay16_Loop                       ; Inner loop uses 3 cycles each iteratio
         GLOBAL  SLCD_Init  
 SLCD_Init  
 ;
-        banksel     SLCD_CTRL_PORT
         bcf         SLCD_CTRL_PORT, SLCD_CTRL_RS    ; RS = 0 (init).
         bcf         SLCD_CTRL_PORT, SLCD_CTRL_RW    ; RW = 0 (init).
         bcf         SLCD_CTRL_PORT, SLCD_CTRL_E     ; E  = 0 (init).
 ;
-        banksel     SLCD_CTRL_TRIS
         bcf         SLCD_CTRL_TRIS, SLCD_CTRL_RS    ; RS = output.
         bcf         SLCD_CTRL_TRIS, SLCD_CTRL_RW    ; RW = output.
         bcf         SLCD_CTRL_TRIS, SLCD_CTRL_E     ; E  = output.
+;
+;   PICDEM2plus 2010 board also has a power control line.
+;
+    IF UCFG_BOARD==UCFG_PD2P_2010
+        bcf         SLCD_CTRL_PORT, SLCD_CTRL_PWR   ; PWR = 0 (init).
+        bcf         SLCD_CTRL_TRIS, SLCD_CTRL_PWR   ; PWR = output.
+        bsf         SLCD_CTRL_PORT, SLCD_CTRL_PWR   ; PWR = 1 (turn on).
+    ENDIF
 ;
 ; All writes in this routine are command (not data) writes.
 ;

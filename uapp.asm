@@ -148,8 +148,7 @@
 ;   UCFG_PD2P_2002 specified.
 ;   *************************
 ;
-; Hardware: PICdem 2 Plus 2002 board.
-;           Microchip PIC18F453 processor with 4 MHz external crystal.
+; Hardware: PICdem 2 Plus 2002 board with 4 MHz external crystal.
 ;           TC74 digital temperature meter with I2C bus clocked at 100 kHz.
 ;
 ; Functions:
@@ -160,15 +159,41 @@
 ;
 ;   User CONFIG. Valid values are found in <"processor".inc>, e.g. <p18f2620.inc>.
 ;
+;       UCFG_18F452 specified.
+;       **********************
+;
+        IF UCFG_PROC==UCFG_18F452
         CONFIG  OSC = RCIO          ; RC oscillator w/ OSC2 configured as RA6
         CONFIG  OSCS = OFF          ; Oscillator system clock switch option is disabled (main oscillator is source)
-        CONFIG  PWRT = OFF          ; PWRT disabled
         CONFIG  BOR = ON            ; Brown-out Reset enabled
         CONFIG  BORV = 20           ; VBOR set to 2.0V
-        CONFIG  WDT = OFF           ; WDT disabled (control is placed on the SWDTEN bit)
-        CONFIG  WDTPS = 128         ; 1:128
         CONFIG  CCP2MUX = ON        ; CCP2 input/output is multiplexed with RC1
         CONFIG  STVR = ON           ; Stack full/underflow will cause Reset
+        ENDIF
+;
+;       UCFG_18F2620 specified.
+;       ***********************
+;
+        IF UCFG_PROC==UCFG_18F2620
+        CONFIG  OSC = RCIO6         ; External RC oscillator, port function on RA6
+        CONFIG  FCMEN = OFF         ; Fail-Safe Clock Monitor disabled
+        CONFIG  IESO = OFF          ; Oscillator Switchover mode disabled
+        CONFIG  BOREN = SBORDIS     ; Brown-out Reset enabled in hardware only (SBOREN is disabled)
+        CONFIG  BORV = 3            ; Minimum setting
+        CONFIG  CCP2MX = PORTC      ; CCP2 input/output is multiplexed with RC1
+        CONFIG  PBADEN = ON         ; PORTB<4:0> pins are configured as analog input channels on Reset
+        CONFIG  LPT1OSC = OFF       ; Timer1 configured for higher power operation
+        CONFIG  MCLRE = ON          ; MCLR pin enabled; RE3 input pin disabled
+        CONFIG  STVREN = ON         ; Stack full/underflow will cause Reset
+        CONFIG  XINST = OFF         ; Instruction set extension and Indexed Addressing mode disabled (Legacy mode)
+        ENDIF
+;
+;       Common to all processors.
+;       *************************
+;
+        CONFIG  PWRT = OFF          ; PWRT disabled
+        CONFIG  WDT = OFF           ; WDT disabled (control is placed on the SWDTEN bit)
+        CONFIG  WDTPS = 128         ; 1:128
         CONFIG  LVP = OFF           ; Single-Supply ICSP disabled
         CONFIG  CP0 = OFF           ; Block 0 (000200-001FFFh) not code-protected
         CONFIG  CP1 = OFF           ; Block 1 (002000-003FFFh) not code-protected
@@ -326,8 +351,7 @@
 ;   UCFG_PD2P_2010 specified.
 ;   *************************
 ;
-; Hardware: PICdem 2 Plus 2010 board.
-;           Microchip PIC18F2620 processor with no external crystal.
+; Hardware: PICdem 2 Plus 2010 board with no external crystal.
 ;           TC74 digital temperature meter with I2C bus clocked at 100 kHz.
 ;
 ; Functions:
@@ -338,21 +362,42 @@
 ;
 ;   User CONFIG. Valid values are found in <"processor".inc>, e.g. <p18f2620.inc>.
 ;
+;       UCFG_18F452 specified.
+;       **********************
+;
+        IF UCFG_PROC==UCFG_18F452
+        CONFIG  OSC = RCIO          ; RC oscillator w/ OSC2 configured as RA6 (MUST INSTALL 4MHz crystal)
+        CONFIG  OSCS = OFF          ; Oscillator system clock switch option is disabled (main oscillator is source)
+        CONFIG  BOR = ON            ; Brown-out Reset enabled
+        CONFIG  BORV = 20           ; VBOR set to 2.0V
+        CONFIG  CCP2MUX = ON        ; CCP2 input/output is multiplexed with RC1
+        CONFIG  STVR = ON           ; Stack full/underflow will cause Reset
+        ENDIF
+;
+;       UCFG_18F2620 specified.
+;       ***********************
+;
+        IF UCFG_PROC==UCFG_18F2620
         CONFIG  OSC = INTIO67       ; Internal oscillator block, port function on RA6 and RA7
         CONFIG  FCMEN = OFF         ; Fail-Safe Clock Monitor disabled
         CONFIG  IESO = OFF          ; Oscillator Switchover mode disabled
-        CONFIG  PWRT = OFF          ; PWRT disabled
         CONFIG  BOREN = SBORDIS     ; Brown-out Reset enabled in hardware only (SBOREN is disabled)
         CONFIG  BORV = 3            ; Minimum setting
-        CONFIG  WDT = OFF           ; WDT disabled (control is placed on the SWDTEN bit)
-        CONFIG  WDTPS = 32768       ; 1:32768
         CONFIG  CCP2MX = PORTC      ; CCP2 input/output is multiplexed with RC1
         CONFIG  PBADEN = ON         ; PORTB<4:0> pins are configured as analog input channels on Reset
         CONFIG  LPT1OSC = OFF       ; Timer1 configured for higher power operation
         CONFIG  MCLRE = ON          ; MCLR pin enabled; RE3 input pin disabled
         CONFIG  STVREN = ON         ; Stack full/underflow will cause Reset
-        CONFIG  LVP = OFF           ; Single-Supply ICSP disabled
         CONFIG  XINST = OFF         ; Instruction set extension and Indexed Addressing mode disabled (Legacy mode)
+        ENDIF
+;
+;       Common to all processors.
+;       *************************
+;
+        CONFIG  PWRT = OFF          ; PWRT disabled
+        CONFIG  WDT = OFF           ; WDT disabled (control is placed on the SWDTEN bit)
+        CONFIG  WDTPS = 128         ; 1:128
+        CONFIG  LVP = OFF           ; Single-Supply ICSP disabled
         CONFIG  CP0 = OFF           ; Block 0 (000800-003FFFh) not code-protected
         CONFIG  CP1 = OFF           ; Block 1 (004000-007FFFh) not code-protected
         CONFIG  CP2 = OFF           ; Block 2 (008000-00BFFFh) not code-protected

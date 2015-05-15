@@ -1,7 +1,7 @@
 [HEADER]
 magic_cookie={66E99B07-E706-4689-9E80-9B2582898A13}
 file_version=1.0
-device=PIC18F452
+device=PIC18F2620
 [PATH_INFO]
 BuildDirPolicy=BuildDirIsSourceDir
 dir_src=
@@ -144,8 +144,8 @@ file_008=ui2c.asm
 file_009=ulcd.asm
 file_010=sm16.asm
 file_011=sbcd.asm
-file_012=C:\KairosSW\pic18f2620-280b\ssio.asm
-file_013=usio.asm
+file_012=usio.asm
+file_013=ssio.asm
 file_014=si2c.inc
 file_015=si2cuser.inc
 file_016=slcd.inc
@@ -161,9 +161,9 @@ file_025=ulcd.inc
 file_026=sm16.inc
 file_027=sbcd.inc
 file_028=p18f452.inc
-file_029=C:\KairosSW\pic18f2620-280b\ssio.inc
-file_030=usio.inc
-file_031=ucfg.inc
+file_029=usio.inc
+file_030=ucfg.inc
+file_031=ssio.inc
 file_032=tinyRTX-PIC18F452.lkr
 file_033=copying.txt
 file_034=copying.lesser.txt
