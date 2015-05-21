@@ -18,18 +18,25 @@
 // copying.txt) along with tinyRTX.  If not, see <http://www.gnu.org/licenses/>.
 //
 // Revision history:
-//  15Oct03  SHiggins@tinyRTX.com  Add comments, rearrange for Project pd2p01.
-//                Deleted LIBPATH directive.
-//                Expanded from 16F872 to 16F877, added ICD space.
-//  31Oct03  SHiggins@tinyRTX.com       Extensive revisions for major reorganization.
-//  28Jul14  SHiggins@tinyRTX.com       Move .cinit to 0x2000 (unimplemented CODEPAGE).
-//  13Aug14  SHiggins@tinyRTX.com       Converted from PIC16F877 to PIC18F452.
-//      03Sep14  SHiggins@tinyRTX.com   Removed SUSR_UdataSec (was unused).
+//  15Oct03 SHiggins@tinyRTX.com    Add comments, rearrange for Project pd2p01.
+//                                  Deleted LIBPATH directive.
+//                                  Expanded from 16F872 to 16F877, added ICD space.
+//  31Oct03 SHiggins@tinyRTX.com    Extensive revisions for major reorganization.
+//  28Jul14 SHiggins@tinyRTX.com    Move .cinit to 0x2000 (unimplemented CODEPAGE).
+//  13Aug14 SHiggins@tinyRTX.com    Converted from PIC16F877 to PIC18F452.
+//  22Aug14 SHiggins@tinyRTX.com    Restored LIBPATH.
+//                                  Added #IFDEF _CRUNTIME sections to support C language.
+//                                  Added CODEPAGEs for idlocs, config, devid, eedata.
+//  27Aug14 SHiggins@tinyRTX.com    Cleanup, removed unused UAPP_UdataSec.
+//  03Sep14 SHiggins@tinyRTX.com    Removed SUSR_UdataSec (was unused).
 //  14May15 Stephen_Higgins@KairosAutonomi.com  
-//              Using CONFIG directive (uapp.sam) requires CODEPAGE NAME=config.
+//              Using CONFIG directive (uapp.asm) requires CODEPAGE NAME=config.
 //  19May15 Stephen_Higgins@KairosAutonomi.com
 //              Added SSIO code and data, and SUTL code and data.
 //              Rearranged program and data; STRC and SSIO get full banks (at least for now.)
+//  21May15 Stephen_Higgins@KairosAutonomi.com
+//              Merged pure ASM and ASM/C linker files.
+//              Some ASM/C revision history comments discarded or merged.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -61,7 +68,6 @@ CODEPAGE    NAME=p2_user_general    START=0x1100    END=0x17ff              // 0
 CODEPAGE    NAME=p3_user_general    START=0x1800    END=0x1fff              // 0x0800 locations. UNUSED
 CODEPAGE    NAME=px_unused          START=0x2000    END=0x7dbf              // 0x5dc0 locations. UNUSED
 CODEPAGE    NAME=px_debug           START=0x7dc0    END=0X7fff  PROTECTED   // 0x0240 locations. DEBUGGER
-//CODEPAGE    NAME=.cinit             START=0x8000    END=0x8001  PROTECTED   // 0x0002 locations. Bogus linker requirement
 CODEPAGE    NAME=idlocs             START=0x200000  END=0x200007   PROTECTED
 CODEPAGE    NAME=config             START=0x300000  END=0x30000D   PROTECTED
 CODEPAGE    NAME=devid              START=0x3FFFFE  END=0x3FFFFF   PROTECTED
@@ -104,8 +110,6 @@ SECTION    NAME=SISD_IntVectorSec   ROM=p0_sisd_int_hi_pri  // Interrupt vector 
 SECTION    NAME=SISD_IntCodeSec     ROM=p0_srtx_general     // Interrupt handler.
 SECTION    NAME=SISD_CodeSec        ROM=p0_srtx_general     // System Interrupt Service Director.
 SECTION    NAME=SRTX_CodeSec        ROM=p0_srtx_general     // System Real Time eXecutive.
-//SECTION    NAME=cinit               ROM=p0_srtx_general     // NEW ROMDATA section. Placed by linker but not used.
-//SECTION    NAME=code                ROM=p0_srtx_general     // NEW p18f452.asm zeros memory. Placed by linker but not used.
 SECTION    NAME=SLCD_CodeSec        ROM=p0_srtx_general     // System LCD services.
 SECTION    NAME=SI2C_TableSec       ROM=p0_srtx_tables      // System I2C lookup table.
 SECTION    NAME=SI2C_CodeSec        ROM=p0_srtx_general     // System I2C services.     LINKNOTE: Place on same page as SI2C_TableSec.
@@ -116,7 +120,7 @@ SECTION    NAME=SM16_CodeSec        ROM=p0_srtx_general     // Math routines.
 SECTION    NAME=SSIO_CodeSec        ROM=p1_srtx_general     // Serial I/O routines.
 SECTION    NAME=SBCD_CodeSec        ROM=p1_srtx_general     // BCD conversion routines.
 //
-// User application routines may use pages 2 and 3.  (Some space remains in pages 0 and 1 if needed.)
+// User application routines may use pages 2 through 15.  (Some space remains in pages 0 and 1 if needed.)
 //
 SECTION    NAME=ULCD_TableSec       ROM=p2_user_tables      // User LCD lookup tables.
 SECTION    NAME=UI2C_TableSec       ROM=p2_user_tables      // User I2C lookup tables.
@@ -165,3 +169,12 @@ SECTION    NAME=USIO_UdataSec       RAM=gpr3        // User Serial I/O routines.
 //    STACK SIZE=0x100 RAM=gpr5
 //  #FI
 #FI
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Following directives were found to have no effect on placing .cinit.
+//  Section name "code" apparently never used.
+//
+//CODEPAGE  NAME=.cinit             START=0x8000    END=0x8001  PROTECTED   // 0x0002 locations. Bogus linker requirement
+//SECTION   NAME=cinit              ROM=p0_srtx_general     // NEW ROMDATA section. Placed by linker but not used.
+//SECTION   NAME=code               ROM=p0_srtx_general     // NEW p18f452.asm zeros memory. Placed by linker but not used.

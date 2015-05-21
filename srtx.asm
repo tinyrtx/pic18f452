@@ -71,11 +71,6 @@ SRTX_Sched_Cnt_TaskI2C  res     1   ; Needs to be GLOBAL because other routines 
     GLOBAL  SRTX_Sched_Cnt_TaskSIO
 SRTX_Sched_Cnt_TaskSIO  res     1   ; Needs to be GLOBAL because other routines can schedule.
 ;
-; Temp variable for SRTX_ComputedBraRCall and SRTX_ComputedGotoCall, because rotates
-;  can only be done through a memory location.
-;
-SRTX_TempRotate         res     1
-;
 ;*******************************************************************************
 ;
 ; SRTX Services.
