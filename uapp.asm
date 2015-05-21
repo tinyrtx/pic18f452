@@ -34,6 +34,8 @@
 ;               Added support for Kairos Autonomi 280B board.
 ;  14May15  Stephen_Higgins@KairosAutonomi.com  
 ;               Substitute #include <ucfg.inc> for <p18f452.inc>.
+;  20May15  Stephen_Higgins@KairosAutonomi.com  
+;               Fix UAPP_Timer1Init by adding terminating return.
 ;
 ;*******************************************************************************
 ;
@@ -764,11 +766,11 @@
 ;
 ;*******************************************************************************
 ;
-;  User application RAM variable definitions.
+;  User application RAM variable definitions. (currently unused)
 ;
-UAPP_UdataSec   UDATA
-;
-UAPP_Temp       res     1   ; General purpose scratch register (unused).
+;;;UAPP_UdataSec   UDATA
+;;;
+;;;UAPP_Temp       res     1   ; General purpose scratch register (unused).
 ;
 ;*******************************************************************************
 ;
@@ -868,4 +870,5 @@ UAPP_Timer1Init
         bsf     PIE1, TMR1IE            ; Enable Timer1 interrupts.
         bsf     T1CON,TMR1ON            ; Turn on Timer1 module.
 ;
+        return
         end

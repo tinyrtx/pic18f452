@@ -28,6 +28,8 @@
 ;               both the trace buffer and RAM.  Unresolved.
 ;   14May15 Stephen_Higgins@KairosAutonomi.com  
 ;               Substitute #include <ucfg.inc> for <p18f452.inc>.
+;   21May15 Stephen_Higgins@KairosAutonomi.com  
+;               Define trace buffer size so all trace RAM fills one bank.
 ;
 ;*******************************************************************************
 ;
@@ -41,13 +43,13 @@
 ;
 STRC_UdataSec   UDATA
 ;
-#define STRC_BUFFER_SIZE 0x80               ; Define trace buffer size.
+#define STRC_BUFFER_SIZE 0xFC               ; Define trace buffer size so all trace RAM fills 1 bank.
 ;
-STRC_Buffer     res     STRC_BUFFER_SIZE    ; Trace buffer.
 STRC_Idx        res     1                   ; Trace buffer current index.
 STRC_PtrH       res     1                   ; Pointer to current location in trace buffer (high nibble).
 STRC_PtrL       res     1                   ; Pointer to current location in trace buffer (low byte).
 STRC_TempINTCON res     1                   ; Saved copy of INTCON.
+STRC_Buffer     res     STRC_BUFFER_SIZE    ; Trace buffer.
 ;
 ;*******************************************************************************
 ;

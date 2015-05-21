@@ -21,7 +21,7 @@
 ; Revision history:
 ;   16Oct03 SHiggins@tinyRTX.com Created from scratch for PICdem2plus demo board.
 ;   13Aug14 SHiggins@tinyRTX.com Converted from PIC16877 to PIC18F452.
-;   15Aug14 SHiggins@tinyRTX.com Converted PIC16 jump table to SRTX_ComputedBraRCall.
+;   15Aug14 SHiggins@tinyRTX.com Converted PIC16 jump table to SUTL_ComputedBraRCall.
 ;   18Aug14 SHiggins@tinyRTX.com Minor optimizations.
 ;   03Sep14 SHiggins@tinyRTX.com
 ;               When msgs complete invoke UI2C_MsgTC74Complete to schedule task.
@@ -35,6 +35,7 @@
 ;
         #include    <ucfg.inc>  ; Configure board and proc, #include <proc.inc>
         #include    <srtx.inc>
+        #include    <sutl.inc>
         #include    <strc.inc>
         #include    <si2c.inc>
         #include    <sm16.inc>
@@ -80,7 +81,7 @@ UI2C_Tbl_MsgState
 ;
         banksel UI2C_MsgState
         movf    UI2C_MsgState, W        ; UI2C_MsgState application message state.
-        call    SRTX_ComputedBraRCall   ; W = offset, index into state machine jump table.
+        call    SUTL_ComputedBraRCall   ; W = offset, index into state machine jump table.
 ;
 ; Processing for each state                                                             I2_MsgState(hex)
 ;

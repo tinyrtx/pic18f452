@@ -22,7 +22,10 @@
 ;   16Oct03  SHiggins@tinyRTX.com   Created from scratch.
 ;   15Aug14  SHiggins@tinyRTX.com   Added SRTX_ComputedBraRCall and SRTX_ComputedGotoCall.
 ;   17Apr15  Stephen_Higgins@KairosAutonomi.com
-;                                   Added SRTX_Sched_Cnt_TaskSIO.
+;               Added SRTX_Sched_Cnt_TaskSIO.
+;   20May15 Stephen_Higgins@KairosAutonomi.com  
+;               Moved  SRTX_ComputedBraRCall and SRTX_ComputedGotoCall to SUTL
+;               for consistency with C version.
 ;
 ;*******************************************************************************
         NOLIST
@@ -33,7 +36,5 @@
 ;
         EXTERN      SRTX_Init
         EXTERN      SRTX_Scheduler
-        EXTERN      SRTX_ComputedBraRCall
-        EXTERN      SRTX_ComputedGotoCall
 ;
         LIST

@@ -22,7 +22,7 @@
 ; Revision history:
 ;   13Jan04  SHiggins@tinyRTX.com Created from scratch.
 ;   12Aug14  SHiggins@tinyRTX.com Converted from PIC16877 to PIC18F452.
-;   15Aug14  SHiggins@tinyRTX.com Converted PIC16 jump table to SRTX_ComputedBraRCall.
+;   15Aug14  SHiggins@tinyRTX.com Converted PIC16 jump table to SUTL_ComputedBraRCall.
 ;   18Aug14  SHiggins@tinyRTX.com Corrections due to testing.
 ;   16Apr15  Stephen_Higgins@KairosAutonomi.com Removed #include <strc.inc>.
 ;   14May15  Stephen_Higgins@KairosAutonomi.com  
@@ -34,7 +34,7 @@
         errorlevel -302 
 ;
         #include    <ucfg.inc>  ; Configure board and proc, #include <proc.inc>
-        #include    <srtx.inc>
+        #include    <sutl.inc>
         #include    <si2cuser.inc>
         #include    <susr.inc>
 ;
@@ -96,7 +96,7 @@ SI2C_Tbl_HwState
 ;
         banksel SI2C_HwState
         movf    SI2C_HwState, W         ; Get SI2C hardware state.
-        call    SRTX_ComputedBraRCall   ; W = offset, index into state machine jump table.
+        call    SUTL_ComputedBraRCall   ; W = offset, index into state machine jump table.
 ;
 ; State processing: Various error conditions.                       SI2C_HwState
 ;

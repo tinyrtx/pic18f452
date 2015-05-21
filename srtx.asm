@@ -30,6 +30,9 @@
 ;               Added SRTX_Sched_Cnt_TaskSIO, SRTX_Dispatcher_CheckSIO.
 ;   14May15 Stephen_Higgins@KairosAutonomi.com  
 ;               Substitute #include <ucfg.inc> for <p18f452.inc>.
+;   20May15 Stephen_Higgins@KairosAutonomi.com  
+;               Moved  SRTX_ComputedBraRCall and SRTX_ComputedGotoCall to SUTL
+;               for consistency with C version.
 ;
 ;*******************************************************************************
 ;
@@ -273,110 +276,4 @@ SRTX_Dispatcher_Check3
 ;
 SRTX_Dispatcher_CheckX
         bra     SRTX_Dispatcher             ; Test scheduled tasks starting w/highest priority task.
-;
-;*******************************************************************************
-;
-; SRTX Computed Branch / Relative Call:
-;   Use the value in W as an offset to the program counter saved in the TOS
-;   (Top Of Stack) registers.  This allows a computed branch or relative call
-;   into a table of program addresses, useful for implementing state tables.
-;
-;   Either BRA or RCALL instructions will work because those instructions use
-;   2 bytes each.  There is a separate routine for using GOTO or CALL instructions.
-;
-;       return                      ; Jump to computed addr.
-;
-; To use this feature in a calling program, set it up as follows:
-;       ...
-;       banksel State_Variable
-;       movf    State_Variable, W       ; Get state variable into W.
-;       call    SRTX_ComputedBraRcall   ; W = offset, index into state machine jump table.
-;
-; (Note that this table must IMMEDIATELY follow the code above.)
-;
-;       bra     State0_Routine      ; Program label for State 0 routine (W = 0)
-;       bra     State1_Routine      ; Program label for State 1 routine (W = 1)
-;       bra     State2_Routine      ; Program label for State 2 routine (W = 2)
-;       ...
-;
-; (Alteratively, the RCALL instruction could be used instead of BRA.)
-;
-;       rcall   State0_Routine      ; Program label for State 0 routine (W = 0)
-;       rcall   State1_Routine      ; Program label for State 1 routine (W = 1)
-;       rcall   State2_Routine      ; Program label for State 2 routine (W = 2)
-;       ...
-;
-;*******************************************************************************
-;
-        GLOBAL  SRTX_ComputedBraRCall
-SRTX_ComputedBraRCall
-;
-        banksel SRTX_TempRotate
-        movwf   SRTX_TempRotate     ; Move input arg W to where we can rotate it.
-        rlncf   SRTX_TempRotate     ; Index * 2 = offset in words (2 bytes).
-        movf    SRTX_TempRotate,W   ; Move Index * 2 back to W.
-        addwf   TOSL, F             ; Add jump offset in W to return address.
-        btfsc   STATUS, C           ; If there was an overflow..
-        incf    TOSH, F             ; ..then adjust the high byte ret addr too.
-;
-;   Notice we don't bother with TOSU because program memory is under 64K bytes
-;   But if we were to bother, it would look like...
-;
-;       btfsc   STATUS, C           ; If there was an overflow..
-;       incf    TOSU, F             ; ..then adjust the upper byte ret addr too.
-;
-        return                      ; Jump to computed addr.
-;
-;*******************************************************************************
-;
-; SRTX Computed Goto / Call:
-;   Use the value in W as an offset to the program counter saved in the TOS
-;   (Top Of Stack) registers.  This allows a computed goto or call
-;   into a table of program addresses, useful for implementing state tables.
-;
-;   Either GOTO or CALL instructions will work because those instructions use
-;   4 bytes each.  There is a separate routine for using BRA or RCALL instructions.
-;
-;       return                      ; Jump to computed addr.
-;
-; To use this feature in a calling program, set it up as follows:
-;       ...
-;       banksel State_Variable
-;       movf    State_Variable, W       ; Get state variable into W.
-;       call    SRTX_ComputedGotoCall   ; W = offset, index into state machine jump table.
-;
-; (Note that this table must IMMEDIATELY follow the code above.)
-;
-;       goto    State0_Routine      ; Program label for State 0 routine (W = 0)
-;       goto    State1_Routine      ; Program label for State 1 routine (W = 1)
-;       goto    State2_Routine      ; Program label for State 2 routine (W = 2)
-;       ...
-;
-; (Alteratively, the CALL instruction could be used instead of GOTO.)
-;
-;       call    State0_Routine      ; Program label for State 0 routine (W = 0)
-;       call    State1_Routine      ; Program label for State 1 routine (W = 1)
-;       call    State2_Routine      ; Program label for State 2 routine (W = 2)
-;       ...
-;
-;*******************************************************************************
-;
-        GLOBAL  SRTX_ComputedGotoCall
-SRTX_ComputedGotoCall
-        banksel SRTX_TempRotate
-        movwf   SRTX_TempRotate     ; Move input arg W to where we can rotate it.
-        rlncf   SRTX_TempRotate     ; Index * 4 = offset in double words (4 bytes).
-        rlncf   SRTX_TempRotate
-        movf    SRTX_TempRotate,W   ; Move Index * 2 back to W.
-        addwf   TOSL, F             ; Add jump offset in W to return address.
-        btfsc   STATUS, C           ; If there was an overflow..
-        incf    TOSH, F             ; ..then adjust the high byte ret addr too.
-;
-;   Notice we don't bother with TOSU because program memory is under 64K bytes
-;   But if we were to bother, it would look like...
-;
-;       btfsc   STATUS, C           ; If there was an overflow..
-;       incf    TOSU, F             ; ..then adjust the upper byte ret addr too.
-;
-        return                      ; Jump to computed addr.
         end

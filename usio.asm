@@ -23,6 +23,8 @@
 ;               Created from ui2c.asm.
 ;   27Apr15 Stephen_Higgins@KairosAutonomi.com
 ;               Added USIO_TxLCDMsgToSIO.
+;   20May15 Stephen_Higgins@KairosAutonomi.com
+;               Fix USIO_UdataSec name.
 ;
 ;*******************************************************************************
 ;
@@ -127,7 +129,7 @@
 ;
 ; User SIO service variables.
 ;
-SIO_UdataSec   UDATA
+USIO_UdataSec   UDATA
 ;
 USIO_TempData       res     1   ; Temporary data.
 USIO_DataXferCnt    res     1   ; Data transfer counter.

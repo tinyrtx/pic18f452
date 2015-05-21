@@ -28,7 +28,8 @@
 ;   26Apr15 Stephen_Higgins@KairosAutonomi.com
 ;               Added support for PIC18F2620, removed UADC_ADCON0_Temp.
 ;               Removed unnecessary banksel's for SFR's in access RAM.
-;   06May15  Stephen_Higgins@KairosAutonomi.com  Support UCFG_PROC == UCFG_18F2620.
+;   06May15 Stephen_Higgins@KairosAutonomi.com
+;               Support UCFG_PROC == UCFG_18F2620.
 ;
 ;*******************************************************************************
 ;

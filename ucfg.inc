@@ -22,7 +22,7 @@
 ;   06May15  Stephen_Higgins@KairosAutonomi.com  Created from scratch.
 ;
 ;*******************************************************************************
-		NOLIST
+        NOLIST
 ;
 ;   Define all supported board configurations.
 ;
@@ -32,7 +32,7 @@
 ;
 ;   Select board being used.
 ;
-#define UCFG_BOARD  UCFG_PD2P_2010  ; Microchip PICDEM2PLUS 2010 (no ext 4MHz)
+#define UCFG_BOARD  UCFG_PD2P_2002
 ;
 ;   Define all supported processors.
 ;

@@ -32,6 +32,8 @@
 ;               Dispense with saving W, STATUS, BSR registers.
 ;   14May15 Stephen_Higgins@KairosAutonomi.com  
 ;               Substitute #include <ucfg.inc> for <p18f452.inc>.
+;   20May15 Stephen_Higgins@KairosAutonomi.com 
+;               Clear RC and TX int flags if they generated int. 
 ;
 ;*******************************************************************************
 ;
@@ -157,8 +159,9 @@ SISD_Director
 ;
         btfss   PIR1, RCIF                  ; Skip if RCIF (receive int) flag set.
         bra     SISD_Director_CheckSIO_Tx   ; RCIF int flag not set, check other ints.
-        btfss   PIE1,RCIE                   ; Skip if RCIE (receive int) enabled.
+        btfss   PIE1, RCIE                  ; Skip if RCIE (receive int) enabled.
         bra     SISD_Director_CheckSIO_Tx   ; RCIF int flag not set, check other ints.
+        bcf     PIR1, RCIF                  ; Clear RC interrupt flag.
         call    SSIO_GetByteFromRxHW        ; RCIF and RCIE both set, System ISR handling when SIO_Rx event.
         bra     SISD_Director_Exit          ; Only execute single interrupt handler.
 ;
@@ -169,6 +172,7 @@ SISD_Director_CheckSIO_Tx
         bra     SISD_Director_CheckI2C      ; TXIF int flag not set, check other ints.
         btfss   PIE1, TXIE                  ; Skip if TXIE clear (transmit int) enabled.
         bra     SISD_Director_CheckI2C      ; TXIF int flag not set, check other ints.
+        bcf     PIR1, TXIF                  ; Clear TX interrupt flag.
         call    SSIO_PutByteIntoTxHW        ; TXIF and TXIE both set, System ISR handling when SIO_Tx event.
         bra     SISD_Director_Exit          ; Only execute single interrupt handler.
 ;
