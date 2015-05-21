@@ -1,4 +1,3 @@
-        TITLE "UAPP - tinyRTX PICdem2plus Demo Release 1.0"
         LIST
 ;*******************************************************************************
 ; tinyRTX Filename: uapp.asm (User APPlication)
