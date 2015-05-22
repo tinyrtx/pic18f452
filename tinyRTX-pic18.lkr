@@ -1,0 +1,257 @@
+////////////////////////////////////////////////////////////////////////////////
+// tinyRTX Filename: tinyRTX-PIC18.lkr (tinyRTX PIC18Fxxxx linker file)
+//
+//  To support a specific processor, add string specified below to
+//      Project/Build Options.../Project/MPLINK Linker/Use Alternate Settings
+//  Supports PIC18F452:     "/u__18F452 "  (don't add the quotes)
+//  Supports PIC18F2620:    "/u__18F2620 " (don't add the quotes)
+//  Supports pure ASM and ASM/C.
+//
+// Copyright 2014 Sycamore Software, Inc.  ** www.tinyRTX.com **
+// Distributed under the terms of the GNU Lesser General Purpose License v3
+//
+// This file is part of tinyRTX. tinyRTX is free software: you can redistribute
+// it and/or modify it under the terms of the GNU Lesser General Public License
+// version 3 as published by the Free Software Foundation.
+//
+// tinyRTX is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// (filename copying.lesser.txt) and the GNU General Public License (filename
+// copying.txt) along with tinyRTX.  If not, see <http://www.gnu.org/licenses/>.
+//
+// Revision history:
+//  15Oct03 SHiggins@tinyRTX.com    Add comments, rearrange for Project pd2p01.
+//                                  Deleted LIBPATH directive.
+//                                  Expanded from 16F872 to 16F877, added ICD space.
+//  31Oct03 SHiggins@tinyRTX.com    Extensive revisions for major reorganization.
+//  28Jul14 SHiggins@tinyRTX.com    Move .cinit to 0x2000 (unimplemented CODEPAGE).
+//  13Aug14 SHiggins@tinyRTX.com    Converted from PIC16F877 to PIC18F452.
+//  22Aug14 SHiggins@tinyRTX.com    Restored LIBPATH.
+//                                  Added #IFDEF _CRUNTIME sections to support C language.
+//                                  Added CODEPAGEs for idlocs, config, devid, eedata.
+//  27Aug14 SHiggins@tinyRTX.com    Cleanup, removed unused UAPP_UdataSec.
+//  03Sep14 SHiggins@tinyRTX.com    Removed SUSR_UdataSec (was unused).
+//  14May15 Stephen_Higgins@KairosAutonomi.com  
+//              Using CONFIG directive (uapp.asm) requires CODEPAGE NAME=config.
+//  19May15 Stephen_Higgins@KairosAutonomi.com
+//              Added SSIO code and data, and SUTL code and data.
+//              Rearranged program and data; STRC and SSIO get full banks (at least for now.)
+//  21May15 Stephen_Higgins@KairosAutonomi.com
+//              Merged pure ASM and ASM/C linker files.
+//              Some ASM/C revision history comments discarded or merged.
+//  22May15 Stephen_Higgins@KairosAutonomi.com
+//              Merged 18F452 (pure ASM and ASM/C) and 18F2620 (pure ASM) linker files.
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+//  General Resources Used - Devices
+//
+//  MCLR pin reserved for debugging, i.e., you cannot use this pin as digital I/O while debugging. 
+//  MCLR/Vpp shared for programming. 
+//  Low-voltage ICSP programming disabled for devices that support this type of programming.
+//  NOTE: The in-circuit debugger does not support Low Voltage Programming (LVP) and will disable this function.
+//      You cannot enable it through programming using the debugger. However, you can enable it through
+//      a dedicated programmer, such as MPLAB PM3. 
+//  RB6 and RB7 reserved for programming and in-circuit debugging. Therefore, other functions multiplexed
+//      on these pins will not be available during debug. 
+//  Two stacks level not available. Also, because the debugger needs to control the stack, TOS registers
+//      (TOSL, TOSH, TOSU) are reserved. 
+//
+//  PIC18F452 Device
+//  ================
+//
+//  Program Memory Used:                      0x7D30-0x7FFF
+//  Software Breakpoints Program Memory Used: 0x7D30-0x7FFF
+//
+//  File Registers Used:
+//      0x5F4-0x5FF, 0xF9C, 0xFD4, 0xFDB-0xFDF, 0xFE3-0xFE7, 0xFEB-0xFEF,        0xFFD-0xFFF
+//  Software Breakpoints File Registers Used: 
+//      0x5EF-0x5FF, 0xF9C, 0xFD4, 0xFDB-0xFDF, 0xFE3-0xFE7, 0xFEB-0xFEF, 0xFFC, 0xFFD-0xFFF
+// 
+//  PIC18F2620 Device
+//  =================
+//
+//  Program Memory Used:                      0xFD30-0xFFFF
+//  Software Breakpoints Program Memory Used: 0xFD30-0xFFFF
+//
+//  File Registers Used:
+//      0xEF4-0xEFF, 0xF9C, 0xFD4, 0xFDB-0xFDF, 0xFE3-0xFE7, 0xFEB-0xFEF,        0xFFD-0xFFF
+//  Software Breakpoints File Registers Used: 
+//      0xEEF-0xEFF, 0xF9C, 0xFD4, 0xFDB-0xFDF, 0xFE3-0xFE7, 0xFEB-0xFEF, 0xFFC, 0xFFD-0xFFF
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Also search for libraries in current directory.
+//
+LIBPATH .
+//
+//  Include C object files and libraries if using C runtime.
+//
+#IFDEF _CRUNTIME
+    FILES c018i.o
+    FILES clib.lib
+    #IFDEF __18F452
+        FILES p18f452.lib
+    #ELSE
+    #IFDEF __18F2620
+        FILES p18f2620.lib
+    #FI
+    #FI
+#FI
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Define code pages in ROM.
+//
+CODEPAGE    NAME=p0_sisd_int_reset  START=0x0000    END=0x0007  PROTECTED   // 0x0008 locations. IGNORED IF C
+CODEPAGE    NAME=p0_sisd_int_hi_pri START=0x0008    END=0x0017  PROTECTED   // 0x0010 locations.
+CODEPAGE    NAME=p0_sisd_int_lo_pri START=0x0018    END=0x0027  PROTECTED   // 0x0010 locations. UNUSED
+CODEPAGE    NAME=p0_srtx_tables     START=0x0028    END=0x00FF              // 0x00d8 locations.
+CODEPAGE    NAME=p0_srtx_general    START=0x0100    END=0x07FF              // 0x0700 locations.
+CODEPAGE    NAME=p1_srtx_general    START=0x0800    END=0x0FFF              // 0x0800 locations.
+CODEPAGE    NAME=p2_user_tables     START=0x1000    END=0x10FF              // 0x0100 locations.
+CODEPAGE    NAME=p2_user_general    START=0x1100    END=0x17FF              // 0x0700 locations.
+CODEPAGE    NAME=p3_user_general    START=0x1800    END=0x1FFF              // 0x0800 locations. UNUSED
+//
+#IFDEF __18F452
+//
+    CODEPAGE    NAME=px_unused      START=0x2000    END=0x7D2F              // 0x7DC0 locations. UNUSED
+    CODEPAGE    NAME=px_debug       START=0x7D30    END=0X7FFF  PROTECTED   // 0x02D0 locations. DEBUGGER
+//
+#ELSE
+#IFDEF __18F2620
+//
+    CODEPAGE    NAME=px_unused      START=0x2000    END=0xFD2F              // 0xDDC0 locations.
+    CODEPAGE    NAME=px_debug       START=0xFD30    END=0XFFFD  PROTECTED   // 0x02D0 locations. DEBUGGER
+//
+#ELSE
+    ERROR SRH001/LinkBarf - Unknown processor specified to linker script.
+#FI
+#FI
+//
+CODEPAGE    NAME=idlocs             START=0x200000  END=0x200007   PROTECTED
+CODEPAGE    NAME=config             START=0x300000  END=0x30000D   PROTECTED
+CODEPAGE    NAME=devid              START=0x3FFFFE  END=0x3FFFFF   PROTECTED
+CODEPAGE    NAME=eedata             START=0xF00000  END=0xF000FF   PROTECTED
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// Assign ROM code space in defined pages.
+//
+// SRTX and supporting routines located in pages 0 and 1.
+//
+SECTION    NAME=SISD_ResetVectorSec ROM=p0_sisd_int_reset   // Reset vector.
+SECTION    NAME=SISD_IntVectorSec   ROM=p0_sisd_int_hi_pri  // Interrupt vector - high priority.
+SECTION    NAME=SISD_IntCodeSec     ROM=p0_srtx_general     // Interrupt handler.
+SECTION    NAME=SISD_CodeSec        ROM=p0_srtx_general     // System Interrupt Service Director.
+SECTION    NAME=SRTX_CodeSec        ROM=p0_srtx_general     // System Real Time eXecutive.
+SECTION    NAME=SLCD_CodeSec        ROM=p0_srtx_general     // System LCD services.
+                                                            // LINKNOTE: Place SI2C_TableSec and SI2C_CodeSec on same page.
+SECTION    NAME=SI2C_TableSec       ROM=p0_srtx_tables      // System I2C lookup table.
+SECTION    NAME=SI2C_CodeSec        ROM=p0_srtx_general     // System I2C services.
+SECTION    NAME=SUSR_CodeSec        ROM=p0_srtx_general     // SRTX - User interface.
+SECTION    NAME=STRC_CodeSec        ROM=p0_srtx_general     // System Trace service.
+SECTION    NAME=SUTL_CodeSec        ROM=p0_srtx_general     // System utilities (computed jumps).
+SECTION    NAME=SM16_CodeSec        ROM=p0_srtx_general     // Math routines.
+SECTION    NAME=SSIO_CodeSec        ROM=p1_srtx_general     // Serial I/O routines.
+SECTION    NAME=SBCD_CodeSec        ROM=p1_srtx_general     // BCD conversion routines.
+//
+// User application routines may use pages 2 through 15.  (Some space remains in pages 0 and 1 if needed.)
+//
+                                                            // LINKNOTE: Place ULCD_TableSec and ULCD_CodeSec on same page.
+SECTION    NAME=ULCD_TableSec       ROM=p2_user_tables      // User LCD lookup tables.
+SECTION    NAME=ULCD_CodeSec        ROM=p2_user_general     // User LCD routines.
+                                                            // LINKNOTE: Place UI2C_TableSec and UI2C_CodeSec on same page.
+SECTION    NAME=UI2C_TableSec       ROM=p2_user_tables      // User I2C lookup tables.
+SECTION    NAME=UI2C_CodeSec        ROM=p2_user_general     // User I2C routines.
+SECTION    NAME=UADC_CodeSec        ROM=p2_user_general     // User ADC routines.
+SECTION    NAME=USIO_CodeSec        ROM=p2_user_general     // User Serial I/O routines.
+SECTION    NAME=UAPP_CodeSec        ROM=p2_user_general     // Main user application.
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// Define data pages in RAM.
+//
+// Access RAM low = 0x0000-0x007F.
+//
+ACCESSBANK  NAME=accessram  START=0x0       END=0x7F
+//
+// General Purpose Registers.
+//
+DATABANK    NAME=gpr0       START=0x0080    END=0x00FF              // Bank 0 GPR's.
+DATABANK    NAME=gpr1       START=0x0100    END=0x01FF              // Bank 1 GPR's.
+DATABANK    NAME=gpr2       START=0x0200    END=0x02FF              // Bank 2 GPR's.
+DATABANK    NAME=gpr3       START=0x0300    END=0x03FF              // Bank 3 GPR's.
+DATABANK    NAME=gpr4       START=0x0400    END=0x04FF              // Bank 4 GPR's.
+//
+#IFDEF __18F452
+//
+DATABANK    NAME=gpr5       START=0x0500    END=0x05F3              // Bank 5 GPR's.
+DATABANK    NAME=gpr5_debug START=0x05F4    END=0x05FF  PROTECTED   // Bank 5 GPR's. DEBUGGER
+//
+#ELSE
+#IFDEF __18F2620
+//
+DATABANK    NAME=gpr5       START=0x0500    END=0x05FF              // Bank  5 GPR's.
+DATABANK    NAME=gpr6       START=0x0600    END=0x06FF              // Bank  6 GPR's.
+DATABANK    NAME=gpr7       START=0x0700    END=0x07FF              // Bank  7 GPR's.
+DATABANK    NAME=gpr8       START=0x0800    END=0x08FF              // Bank  8 GPR's.
+DATABANK    NAME=gpr9       START=0x0900    END=0x09FF              // Bank  9 GPR's.
+DATABANK    NAME=gpr10      START=0x0A00    END=0x0AFF              // Bank 10 GPR's.
+DATABANK    NAME=gpr11      START=0x0B00    END=0x0BFF              // Bank 11 GPR's.
+DATABANK    NAME=gpr12      START=0x0C00    END=0x0CFF              // Bank 12 GPR's.
+DATABANK    NAME=gpr13      START=0x0D00    END=0x0DFF              // Bank 13 GPR's.
+DATABANK    NAME=gpr14      START=0x0E00    END=0x0EDF              // Bank 14 GPR's.
+DATABANK    NAME=gpr14_dbg  START=0x0EE0    END=0x0EFF  PROTECTED   // Bank 14 GPR's. DEBUGGER
+DATABANK    NAME=gpr15      START=0x0F00    END=0x0F7F              // Bank 15 GPR's.
+//
+#FI
+#FI
+//
+// Access RAM high = Bank 15 Special Function Registers 0x0F80-0x0FFF.
+//
+ACCESSBANK  NAME=accesssfr  START=0x0F80    END=0x0FFF  PROTECTED
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// Assign RAM data space in defined banks.
+//
+// SISD context save variables must be in shared data space.  
+//
+SECTION    NAME=SISD_UdataAcsSec    RAM=accessram   // SISD context save.
+//
+// SRTX and supporting variables located in banks 0, 1, and 2.
+//
+SECTION    NAME=SRTX_UdataSec       RAM=gpr0        // SRTX services. LINKNOTE: SRTX_UdataSec MUST be in Bank 0.
+SECTION    NAME=SLCD_UdataSec       RAM=gpr0        // System LCD services.           
+SECTION    NAME=SI2C_UdataSec       RAM=gpr0        // System I2C services.           
+SECTION    NAME=SUTL_UdataSec       RAM=gpr0        // System utilities (computed jumps).
+SECTION    NAME=SM16_UdataSec       RAM=gpr0        // Fixed/Floating point library.
+SECTION    NAME=STRC_UdataSec       RAM=gpr1        // System Trace services.           
+SECTION    NAME=SSIO_UdataSec       RAM=gpr2        // System Serial I/O services.           
+//
+//  User application variables may use banks 3, and possibly 4 and 5 depending on what the C environment needs.
+//  Some space remains in banks 0 (fast shared access), 1 and 2 if needed.
+//  Additionally the trace buffer may be disabled and that would free up all of bank 1.
+//
+SECTION    NAME=UADC_UdataSec       RAM=gpr3        // User ADC routines.
+SECTION    NAME=ULCD_UdataSec       RAM=gpr3        // User LCD routines.
+SECTION    NAME=UI2C_UdataSec       RAM=gpr3        // User I2C routines.
+SECTION    NAME=USIO_UdataSec       RAM=gpr3        // User Serial I/O routines.
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// Place C object files and stack.  This needs to be cleaned up.
+//
+#IFDEF _CRUNTIME
+//  SECTION    NAME=CONFIG     ROM=config
+//  #IFDEF _DEBUGSTACK           Criminy I have not found any docs on _DEBUGSTACK.
+    STACK SIZE=0x100 RAM=gpr4
+//  #ELSE
+//    STACK SIZE=0x100 RAM=gpr5
+//  #FI
+#FI
