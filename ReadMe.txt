@@ -28,6 +28,8 @@
 Initial population of files:
 
 *.asm  - Assembler language source files
+*.c    - C language source files
+*.h    - C language header files
 *.inc  - Assembler language include files
 *.lkr  - Linker directive file
 *.txt  - ReadMe text (this file) and GNU license texts
@@ -49,6 +51,8 @@ Added files to support documentation:
 These files are generally included in the .zip archive for a release:
 
 *.asm  - Assembler language source files
+*.c    - C language source files
+*.h    - C language header files
 *.inc  - Assembler language include files
 *.lkr  - Linker directive file
 *.mcp  - MPLAB IDE project file
