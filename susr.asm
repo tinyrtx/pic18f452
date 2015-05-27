@@ -43,6 +43,8 @@
 ;               Use conditional compiles for various processors and boards.
 ;               Spit out task markers on RS-232 for state of health.
 ;               Substitute #include <ucfg.inc> for <p18f452.inc>.
+;   22May15 Stephen_Higgins@KairosAutonomi.
+;               Only call UI2C_MsgTC74ProcessData and UI2C_MsgDone when board supports it.
 ;
 ;*******************************************************************************
 ;
@@ -268,7 +270,11 @@ SUSR_ISR_I2C
         GLOBAL  SUSR_TaskI2C
 SUSR_TaskI2C
         smTraceL STRC_TSK_BEG_I2C
+;
+    IF UCFG_BOARD==UCFG_PD2P_2002 || UCFG_BOARD==UCFG_PD2P_2010
         call    UI2C_MsgTC74ProcessData ; Process data from TC74 message.
+    ENDIF
+;
         smTraceL STRC_TSK_END_I2C
         return
 ;
@@ -289,6 +295,9 @@ SUSR_TaskSIO_MsgRcvd
 ;
         GLOBAL  SUSR_TaskI2C_MsgDone
 SUSR_TaskI2C_MsgDone
+;
+    IF UCFG_BOARD==UCFG_PD2P_2002 || UCFG_BOARD==UCFG_PD2P_2010
         goto    UI2C_MsgDone
+    ENDIF
 ;
         end
